@@ -49,3 +49,6 @@ temp
 #claude
 .claude/*
 !.claude/skills/
+
+# lokalny plan wdrożenia - nie pushować
+/PLAN/

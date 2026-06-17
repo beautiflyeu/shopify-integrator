@@ -8,4 +8,3 @@ npx shadcn@latest init --preset bIkf1TW --template next --pointer
 
 Notatka:
 Ten preset traktować jako standard startowy dla podobnych aplikacji.
-Ŕ
