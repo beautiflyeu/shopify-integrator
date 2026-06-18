@@ -15,7 +15,6 @@ import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SearchInput } from "@/components/search-input";
 import { StatusBadge } from "@/components/status-badge";
-import { ExportCsvButton } from "@/components/export-csv-button";
 import { useSelectionStore } from "@/stores/selection";
 import type { ProductStatus } from "@/types/product";
 
@@ -44,7 +43,7 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
       data = data.filter(
         (r) =>
           String(r.name ?? "").toLowerCase().includes(term) ||
-          String(r.sku ?? "").toLowerCase().includes(term) ||
+          String(r.productType ?? "").toLowerCase().includes(term) ||
           String(r.ean ?? "").toLowerCase().includes(term)
       );
     }
@@ -69,21 +68,10 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
           onCheckedChange={() => toggleProduct(row.original.id)}
         />
       ),
-      size: 40,
-    }),
-    col.accessor("name", {
-      header: "Nazwa produktu",
-      cell: (info) => (
-        <Link
-          href={`/dashboard/${info.row.original.id}`}
-          className="text-sm hover:underline"
-        >
-          {info.getValue()}
-        </Link>
-      ),
+      size: 28,
     }),
     col.accessor("productType", {
-      header: "Type",
+      header: "Model",
       cell: (info) => {
         const val = info.getValue();
         return val ? (
@@ -93,16 +81,6 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
         );
       },
       size: 150,
-    }),
-    col.accessor("status", {
-      header: "Status",
-      cell: (info) => <StatusBadge status={info.getValue()} />,
-      size: 130,
-    }),
-    col.accessor("sku", {
-      header: "SKU",
-      cell: (info) => <span className="font-mono text-xs">{info.getValue()}</span>,
-      size: 120,
     }),
     col.accessor("ean", {
       header: "EAN",
@@ -115,6 +93,22 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
         );
       },
       size: 140,
+    }),
+    col.accessor("name", {
+      header: "Nazwa produktu",
+      cell: (info) => (
+        <Link
+          href={`/dashboard/${info.row.original.id}`}
+          className="text-xs hover:underline"
+        >
+          {info.getValue()}
+        </Link>
+      ),
+    }),
+    col.accessor("status", {
+      header: "Status",
+      cell: (info) => <StatusBadge status={info.getValue()} />,
+      size: 130,
     }),
     col.accessor("changedFieldsCount", {
       header: "Pola zmienione",
@@ -153,7 +147,7 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
         <SearchInput
           value={query}
           onChange={setQuery}
-          placeholder="Szukaj po nazwie, SKU lub EAN..."
+          placeholder="Szukaj po nazwie, modelu lub EAN..."
           className="w-72"
         />
         <div className="flex gap-1">
@@ -172,18 +166,6 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
             </button>
           ))}
         </div>
-        <div className="ml-auto flex items-center gap-3">
-          <ExportCsvButton
-            getProductIds={() => {
-              const sel = [...selectedProductIds];
-              return sel.length > 0 ? sel : filtered.map((r) => r.id);
-            }}
-            label={selectedProductIds.size > 0 ? "Eksportuj zaznaczone" : "Eksportuj widoczne"}
-          />
-          <span className="text-xs text-muted-foreground">
-            {filtered.length} / {rows.length} produktów
-          </span>
-        </div>
       </div>
 
       <div className="rounded-md border border-border">
@@ -196,7 +178,7 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
                     className={cn(
-                      "px-4 py-2 text-left text-xs font-medium text-muted-foreground",
+                      "px-2 py-2 text-left text-xs font-medium text-muted-foreground",
                       header.column.getCanSort() && "cursor-pointer select-none"
                     )}
                     style={{ width: header.column.getSize() }}
@@ -229,7 +211,7 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
                   className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-4 py-2">
+                    <td key={cell.id} className="px-2 py-2">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}

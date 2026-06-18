@@ -17,18 +17,29 @@ const CSV_HEADERS = [
   "Barcode",
   "Option1 name",
   "Option1 value",
+  "Option1 Linked To",
   "Option2 name",
   "Option2 value",
+  "Option2 Linked To",
+  "Option3 name",
+  "Option3 value",
+  "Option3 Linked To",
   "Price",
   "Compare-at price",
+  "Cost per item",
   "Charge tax",
+  "Tax code",
+  "Unit price total measure",
+  "Unit price total measure unit",
+  "Unit price base measure",
+  "Unit price base measure unit",
   "Inventory tracker",
   "Inventory quantity",
   "Continue selling when out of stock",
-  "Requires shipping",
-  "Fulfillment service",
   "Weight value (grams)",
   "Weight unit for display",
+  "Requires shipping",
+  "Fulfillment service",
   "Product image URL",
   "Image position",
   "Image alt text",
@@ -36,6 +47,20 @@ const CSV_HEADERS = [
   "Gift card",
   "SEO title",
   "SEO description",
+  "Color (product.metafields.shopify.color-pattern)",
+  "Google Shopping / Google product category",
+  "Google Shopping / Gender",
+  "Google Shopping / Age group",
+  "Google Shopping / Manufacturer part number (MPN)",
+  "Google Shopping / Ad group name",
+  "Google Shopping / Ads labels",
+  "Google Shopping / Condition",
+  "Google Shopping / Custom product",
+  "Google Shopping / Custom label 0",
+  "Google Shopping / Custom label 1",
+  "Google Shopping / Custom label 2",
+  "Google Shopping / Custom label 3",
+  "Google Shopping / Custom label 4",
 ];
 
 function slugify(title: string): string {
@@ -76,18 +101,29 @@ interface CsvRow {
   Barcode?: string;
   "Option1 name"?: string;
   "Option1 value"?: string;
+  "Option1 Linked To"?: string;
   "Option2 name"?: string;
   "Option2 value"?: string;
+  "Option2 Linked To"?: string;
+  "Option3 name"?: string;
+  "Option3 value"?: string;
+  "Option3 Linked To"?: string;
   Price?: string;
   "Compare-at price"?: string;
+  "Cost per item"?: string;
   "Charge tax"?: string;
+  "Tax code"?: string;
+  "Unit price total measure"?: string;
+  "Unit price total measure unit"?: string;
+  "Unit price base measure"?: string;
+  "Unit price base measure unit"?: string;
   "Inventory tracker"?: string;
   "Inventory quantity"?: string;
   "Continue selling when out of stock"?: string;
-  "Requires shipping"?: string;
-  "Fulfillment service"?: string;
   "Weight value (grams)"?: string;
   "Weight unit for display"?: string;
+  "Requires shipping"?: string;
+  "Fulfillment service"?: string;
   "Product image URL"?: string;
   "Image position"?: string;
   "Image alt text"?: string;
@@ -95,6 +131,20 @@ interface CsvRow {
   "Gift card"?: string;
   "SEO title"?: string;
   "SEO description"?: string;
+  "Color (product.metafields.shopify.color-pattern)"?: string;
+  "Google Shopping / Google product category"?: string;
+  "Google Shopping / Gender"?: string;
+  "Google Shopping / Age group"?: string;
+  "Google Shopping / Manufacturer part number (MPN)"?: string;
+  "Google Shopping / Ad group name"?: string;
+  "Google Shopping / Ads labels"?: string;
+  "Google Shopping / Condition"?: string;
+  "Google Shopping / Custom product"?: string;
+  "Google Shopping / Custom label 0"?: string;
+  "Google Shopping / Custom label 1"?: string;
+  "Google Shopping / Custom label 2"?: string;
+  "Google Shopping / Custom label 3"?: string;
+  "Google Shopping / Custom label 4"?: string;
 }
 
 function buildProductRows(product: NormalizedProduct, activeFields: Set<string>): CsvRow[] {
@@ -148,12 +198,12 @@ function buildProductRows(product: NormalizedProduct, activeFields: Set<string>)
       row["Inventory tracker"] = "shopify";
       row["Inventory quantity"] = String(product.inventoryQty ?? 0);
       row["Continue selling when out of stock"] = "DENY";
-      row["Requires shipping"] = "TRUE";
-      row["Fulfillment service"] = "manual";
       if (product.weightGrams != null) {
         row["Weight value (grams)"] = String(product.weightGrams);
         row["Weight unit for display"] = "g";
       }
+      row["Requires shipping"] = "TRUE";
+      row["Fulfillment service"] = "manual";
 
       rows.push(row);
     });
@@ -173,12 +223,12 @@ function buildProductRows(product: NormalizedProduct, activeFields: Set<string>)
     row["Inventory tracker"] = "shopify";
     row["Inventory quantity"] = String(product.inventoryQty ?? 0);
     row["Continue selling when out of stock"] = "DENY";
-    row["Requires shipping"] = "TRUE";
-    row["Fulfillment service"] = "manual";
     if (product.weightGrams != null) {
       row["Weight value (grams)"] = String(product.weightGrams);
       row["Weight unit for display"] = "g";
     }
+    row["Requires shipping"] = "TRUE";
+    row["Fulfillment service"] = "manual";
     if (include("images") && firstImages.length > 0) {
       row["Product image URL"] = firstImages[0].url;
       row["Image position"] = "1";

@@ -3,6 +3,7 @@ import { normalizeListItem } from "@/modules/pim/normalize";
 import { diffProduct } from "@/modules/diff/diffProduct";
 import { MetricCard } from "@/components/metric-card";
 import { DiffTable, type DiffTableRow } from "@/components/diff-table";
+import { DashboardHeader } from "@/components/dashboard-header";
 import type { ProductStatus } from "@/types/product";
 
 export const dynamic = "force-dynamic";
@@ -41,10 +42,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-lg font-semibold">Dashboard</h1>
-        <p className="text-sm text-muted-foreground">Produkty z PIM Beautifly</p>
-      </div>
+      <DashboardHeader />
 
       {error ? (
         <div className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">

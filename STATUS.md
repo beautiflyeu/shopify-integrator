@@ -1,58 +1,58 @@
-# STATUS - Shopify Integrator — Aktualizacja designu Pencil
+# STATUS - Shopify Integrator — UI lista + integracja Shopify
 
-*Ostatnia aktualizacja: 2026-06-17 15:30*
+*Ostatnia aktualizacja: 2026-06-18 13:00*
 
 ## Co robimy
-Aktualizacja pliku `pencil-new.pen` żeby odzwierciedlał aktualny wygląd aplikacji — kierunek **kod → Pencil** (nie odwrotnie). Aplikacja była rozwijana (nowe zakładki, kolumny, pola) a Pencil był nieaktualny.
+Budujemy narzędzie do synchronizacji produktów PIM (Beautifly) ↔ Shopify. Aktualnie dopracowujemy UI listy produktów i przygotowujemy integrację z Shopify Admin API.
 
 ## Co zostało zrobione
 
-### Dashboard (frame N5yns) ✅
-- Metric cards: "Nowe produkty/Zmienione/Usunięte w PIM" → **"Łącznie (183) / Nowe (42) / Zmienione (118) / Wymaga decyzji (15)"** z poprawnymi kolorami
-- Nagłówek: "Diff Dashboard" → **"Dashboard"**, subtitle → **"Produkty z PIM Beautifly"**
-- Przycisk "Filtry" → **"Eksportuj CSV"** (ikona download)
-- Filter buttons: dodano **"Wymaga decyzji"** jako 5. filtr
-- Tabela: przebudowane kolumny: usunięto OST. SYNCHRONIZACJA + AKCJE, dodano osobne **SKU (120px)** i **EAN (140px)**, PRODUKT → NAZWA PRODUKTU
-- Zaktualizowano wszystkie 6 wierszy danych (dane z pętlą JS)
+### Lista produktów (`components/diff-table.tsx`) ✅
+- Nowa kolejność kolumn wg CSV template: **[checkbox, Model, EAN, Nazwa produktu, Status, Pola zmienione]**
+- Usunięta kolumna SKU
+- Kolumna "Type" przemianowana na **"Model"** (pokazuje `item.model` z PIM)
+- Zmniejszony checkbox (28px), padding komórek px-2, tekst xs
+- Usunięty duplikat ExportCsvButton i licznik produktów z toolbara tabeli
 
-### Product Detail — zakładka "Shopify" (frame UmW97) ✅
-- Dodano **Tab Bar**: "Dane produktu" (nieaktywna) | **"Shopify"** (aktywna)
-- Podzielono kolumnę DECYZJA → **STATUS (90px) + AKCJA (190px)**
-- Zaktualizowano wszystkie 8 wierszy field diff (5 z FieldToggle, 3 "Brak zmian")
+### Nagłówek dashboardu (`components/dashboard-header.tsx`) ✅ NOWY
+- Nowy client component z przyciskami po prawej stronie tytułu
+- **"Eksportuj CSV"** — działa, eksportuje zaznaczone produkty
+- **"Synchronizuj zaznaczone"** — placeholder, `disabled` dopóki nic nie zaznaczone
 
-### Product Detail — zakładka "Dane produktu" (nowy frame PRnw5) ✅
-- Nowy ekran 1440×1024 px z Tab Bar "**Dane produktu**" (aktywna) | "Shopify" (nieaktywna)
-- Zawartość zakładki:
-  - Badges: vendor, typ, barcode, dostępność, waga
-  - 2-kolumnowy layout: galeria (320px + thumbnails) + ceny PLN/EUR netto/brutto + stock "24 szt." + wymiary
-  - Opis + Krótkie opisy (numerowane) + USP (checkmark icons)
-  - Tabela parametrów technicznych (5 wierszy)
-  - Tagi/Rodziny jako badge chips
+### Mapowanie pól (`modules/pim/normalize.ts`) ✅
+- `productType` = `md.title ?? raw.name` (tytuł z PIM)
+- Trafia do kolumny "Type" w CSV oraz do wiersza "Type" w zakładce Shopify
+
+### API PIM (`services/beautifly.ts`) ✅
+- Dodano pole `model` do `BeautiflyProductListItem`
+- Zapytanie API pobiera `fields=id,sku,model,name,ean`
+- `searchProducts()` szuka też po modelu
 
 ## Gdzie jesteśmy
-Sesja zakończona. Wszystkie główne ekrany Pencil zaktualizowane. Na kanvasie jest teraz 6 ekranów: Dashboard, Product Detail (Shopify tab), Product Detail (Dane produktu tab), Sync Queue, Logs + paleta kolorów.
+UI listy gotowy. Próbujemy podłączyć Shopify Admin API — token wgrany, ale okazał się nieprawidłowy.
 
 ## Co pozostało
-- [ ] **Etap 06B — API Push** do Shopify (wymaga credentials):
-  - `SHOP_DOMAIN=` i `SHOPIFY_ACCESS_TOKEN=` w `.env.local` — PUSTE
-  - `modules/sync/buildApiPayload.ts` — selekcja + diff → `productUpdate` input
-  - `modules/sync/executeSync.ts` — mutacje GraphQL
-  - `app/api/sync/route.ts` — endpoint synca
-- [ ] **Sync Queue** (`app/sync-queue/page.tsx`) — placeholder, czeka na 06B
-- [ ] **Logs** (`app/logs/page.tsx`) — placeholder, czeka na 06B
-- [ ] Ewentualnie: Pencil — brakuje badge "Wymaga decyzji" w kolorze purple (brak zmiennej w tokenie)
+- [ ] **Shopify token** — wgrany `shpss_...` jest NIEPRAWIDŁOWY. Potrzebny `shpat_` z custom app w Shopify Admin (`beautifly-pl.myshopify.com/admin/settings/apps/development`)
+- [ ] **Shopify diff flow** — po uzyskaniu tokenu: `fetchAllShopifyProducts()` + `normalizeShopifyProduct()` + `diffProduct()` w `app/api/export/csv/route.ts`
+- [ ] **Przycisk "Synchronizuj zaznaczone"** — wpiąć logikę sync po 06B (`buildApiPayload.ts` + `executeSync.ts`)
+- [ ] **Product category w CSV** — kolumna pusta, potrzeba zmapować na taksonomię Shopify (np. Health & Beauty > Skin Care)
+- [ ] **Sync Queue** (`app/sync-queue/page.tsx`) — placeholder
+- [ ] **Logs** (`app/logs/page.tsx`) — placeholder
 
 ## Ważne decyzje/ustalenia
-- Plik designu: `pencil-new.pen` w root projektu
-- Kierunek synca designu: **kod → Pencil** (kod jest source of truth)
-- `BEAUTIFLY_API_KEY=29u8b7h1q2vuLQ0lTu5F` — działa
-- `SHOP_DOMAIN=` i `SHOPIFY_ACCESS_TOKEN=` — PUSTE, blokują etap 06B
-- Font: Inter, `forcedTheme="light"`
-- CSV export: limit 50 produktów, 32 kolumny wypełnione
-- Zdjęcia produktów z Google Drive via `external_sources` (nie z `media.images` — zawsze puste)
+- **Brak Supabase** — flow: PIM → diff vs Shopify (bezpośrednio) → CSV/API → Shopify
+- `productType` w `NormalizedProduct` = tytuł produktu PIM (nie model) → trafia do Shopify "Type"
+- Kolumna "Model" w liście = `item.model` z API listowego (osobne od productType)
+- `SHOP_DOMAIN=beautifly-pl.myshopify.com` ✅ ustawiony
+- `SHOPIFY_ACCESS_TOKEN=shpss_...` ❌ nieprawidłowy typ tokenu
+- `BEAUTIFLY_API_KEY=29u8b7h1q2vuLQ0lTu5F` ✅ działa
+
+## Problemy/blokery
+**Shopify token** — `shpss_` to token sesji (CI/CD), nie Admin API. Trzeba wygenerować `shpat_` token przez: Shopify Admin → Settings → Apps → Develop apps → utwórz custom app → API credentials → Install → skopiuj token (pokazywany jednorazowo).
 
 ## Następne kroki
-1. Uzupełnij `.env.local`: `SHOP_DOMAIN=` i `SHOPIFY_ACCESS_TOKEN=`
-2. Etap 06B: `buildApiPayload.ts` + `executeSync.ts` + `app/api/sync/route.ts`
-3. Wpiąć przycisk "Synchronizuj" w dashboard/product detail (obok "Eksportuj CSV")
-4. Sync Queue + Logs — realne dane z historii synchronizacji
+1. Wygeneruj prawidłowy `shpat_` token w Shopify Admin i wklej do `.env.local`
+2. Przetestuj połączenie (`curl` na `/admin/api/2026-04/graphql.json`)
+3. Podepnij `fetchAllShopifyProducts()` do eksportu CSV — diff PIM vs Shopify
+4. Wpiąć "Synchronizuj zaznaczone" — `buildApiPayload.ts` + `executeSync.ts`
+5. Uzupełnić "Product category" w CSV (stała domyślna lub mapowanie z PIM)

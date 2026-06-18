@@ -65,7 +65,7 @@ export function normalizeProduct(raw: BeautiflyProduct): NormalizedProduct {
     inventoryQty: raw.stock?.available ?? 0,
     vendor: raw.brand ?? null,
     weightGrams: raw.main_details?.weight_gross != null ? Math.round(raw.main_details.weight_gross * 1000) : null,
-    productType: raw.model ?? null,
+    productType: String(md.title ?? raw.name) || null,
   };
 }
 
