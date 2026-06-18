@@ -5,14 +5,14 @@ import { buildCsvPayload } from "@/modules/sync/buildCsvPayload";
 const MAX_PRODUCTS = 50;
 
 export async function POST(request: Request) {
-  let body: { productIds?: string[]; fieldKeys?: string[] };
+  let body: { productIds?: string[]; fieldKeys?: string[]; categoryMap?: Record<string, string> };
   try {
     body = await request.json();
   } catch {
     return new Response("Invalid JSON", { status: 400 });
   }
 
-  const { productIds, fieldKeys } = body;
+  const { productIds, fieldKeys, categoryMap } = body;
 
   if (!Array.isArray(productIds) || productIds.length === 0) {
     return new Response("productIds required", { status: 400 });
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
   }
 
   const fieldSet = fieldKeys && fieldKeys.length > 0 ? new Set(fieldKeys) : undefined;
-  const csv = buildCsvPayload(products, fieldSet);
+  const csv = buildCsvPayload(products, fieldSet, categoryMap);
 
   const date = new Date().toISOString().slice(0, 10);
   const filename = `shopify-export-${date}.csv`;

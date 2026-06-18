@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FieldToggle } from "@/components/field-toggle";
 import type { FieldStatus } from "@/modules/diff/diffProduct";
@@ -27,6 +29,37 @@ interface FieldDiffRowProps {
   onToggle: () => void;
 }
 
+const TRUNCATE_THRESHOLD = 60;
+
+function isTruncated(value: string | null): boolean {
+  return value != null && value.length > TRUNCATE_THRESHOLD;
+}
+
+function ValueCell({ value }: { value: string | null }) {
+  const [expanded, setExpanded] = useState(false);
+  const truncatable = isTruncated(value);
+
+  if (!value) return <span className="text-muted-foreground">—</span>;
+
+  return (
+    <span className="flex items-start gap-1">
+      <span className={cn("text-muted-foreground", !expanded && truncatable && "line-clamp-1")}>
+        {value}
+      </span>
+      {truncatable && (
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          className="mt-0.5 shrink-0 text-muted-foreground hover:text-foreground"
+          title={expanded ? "Zwiń" : "Rozwiń"}
+        >
+          <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", expanded && "rotate-180")} />
+        </button>
+      )}
+    </span>
+  );
+}
+
 export function FieldDiffRow({
   fieldName,
   pimValue,
@@ -38,10 +71,8 @@ export function FieldDiffRow({
   return (
     <tr className={cn("border-b border-border text-sm", STATUS_CLASSES[status])}>
       <td className="px-4 py-2 font-medium text-foreground">{fieldName}</td>
-      <td className="px-4 py-2 text-muted-foreground max-w-[200px] truncate">{pimValue ?? "—"}</td>
-      <td className="px-4 py-2 text-muted-foreground max-w-[200px] truncate">
-        {shopifyValue ?? "—"}
-      </td>
+      <td className="px-4 py-2 max-w-[200px]"><ValueCell value={pimValue} /></td>
+      <td className="px-4 py-2 max-w-[200px]"><ValueCell value={shopifyValue} /></td>
       <td className="px-4 py-2">
         <span
           className={cn(

@@ -12,6 +12,7 @@ interface FieldDiffDetailProps {
   normalized: NormalizedProduct;
   diff: ProductDiff;
   fieldMap: FieldMapping[];
+  allCategories?: { id: string; fullName: string }[];
 }
 
 function formatValue(value: unknown): string | null {
@@ -30,6 +31,7 @@ export function FieldDiffDetail({
   normalized,
   diff,
   fieldMap,
+  allCategories,
 }: FieldDiffDetailProps) {
   const { isFieldSelected, toggleField } = useSelectionStore();
 

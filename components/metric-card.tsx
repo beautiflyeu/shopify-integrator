@@ -2,10 +2,10 @@ import { cn } from "@/lib/utils";
 import type { ProductStatus } from "@/types/product";
 
 const METRIC_COLORS: Record<string, string> = {
-  new: "text-info-foreground",
-  changed: "text-warning-foreground",
-  removed: "text-error-foreground",
-  needs_decision: "text-purple-600",
+  new: "text-green-600",
+  changed: "text-purple-600",
+  removed: "text-red-600",
+  needs_decision: "text-blue-600",
   total: "text-foreground",
 };
 

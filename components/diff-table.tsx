@@ -99,7 +99,8 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
       cell: (info) => (
         <Link
           href={`/dashboard/${info.row.original.id}`}
-          className="text-xs hover:underline"
+          className="line-clamp-2 text-xs hover:underline"
+          title={info.getValue()}
         >
           {info.getValue()}
         </Link>

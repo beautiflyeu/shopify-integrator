@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { fetchProduct, ALL_INCLUDES } from "@/services/beautifly";
+import { fetchShopifyCategories } from "@/services/shopify-taxonomy";
 import { normalizeProduct } from "@/modules/pim/normalize";
 import { diffProduct } from "@/modules/diff/diffProduct";
 import { FIELD_MAP } from "@/config/field-map";
 import { FieldDiffDetail } from "@/components/field-diff-detail";
 import { StatusBadge } from "@/components/status-badge";
 import { ProductInfoTab } from "@/components/product-info-tab";
+import { ProductCategorySelector } from "@/components/product-category-selector";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const dynamic = "force-dynamic";
@@ -22,16 +24,22 @@ export default async function ProductDetailPage({ params }: Props) {
   let normalized = null;
   let diff = null;
   let raw = null;
+  let shopifyCategories: { id: string; fullName: string }[] = [];
 
   try {
-    raw = await fetchProduct(Number(id), {
-      lang: "pl",
-      include: [...ALL_INCLUDES],
-    });
+    [raw] = await Promise.all([
+      fetchProduct(Number(id), { lang: "pl", include: [...ALL_INCLUDES] }),
+    ]);
     normalized = normalizeProduct(raw);
     diff = diffProduct(normalized, null);
   } catch (err) {
     error = err instanceof Error ? err.message : "Błąd pobierania produktu";
+  }
+
+  try {
+    shopifyCategories = await fetchShopifyCategories();
+  } catch {
+    // kategorie niedostępne — selector nadal działa z sugestiami
   }
 
   return (
@@ -72,11 +80,20 @@ export default async function ProductDetailPage({ params }: Props) {
             </TabsContent>
 
             <TabsContent value="shopify">
+              <div className="mb-4 max-w-lg">
+                <ProductCategorySelector
+                  productId={id}
+                  productName={normalized.name}
+                  productModel={normalized.productType}
+                  allCategories={shopifyCategories}
+                />
+              </div>
               <FieldDiffDetail
                 productId={id}
                 normalized={normalized}
                 diff={diff}
                 fieldMap={FIELD_MAP}
+                allCategories={shopifyCategories}
               />
             </TabsContent>
           </Tabs>

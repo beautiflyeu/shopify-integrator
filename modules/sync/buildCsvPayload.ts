@@ -147,7 +147,7 @@ interface CsvRow {
   "Google Shopping / Custom label 4"?: string;
 }
 
-function buildProductRows(product: NormalizedProduct, activeFields: Set<string>): CsvRow[] {
+function buildProductRows(product: NormalizedProduct, activeFields: Set<string>, categoryMap?: Record<string, string>): CsvRow[] {
   const handle = slugify(product.title || product.name);
   const rows: CsvRow[] = [];
 
@@ -172,6 +172,7 @@ function buildProductRows(product: NormalizedProduct, activeFields: Set<string>)
         if (include("seoDescription")) row["SEO description"] = product.seoDescription ?? undefined;
         row.Vendor = product.vendor ?? "Beautifly";
         row.Type = product.productType ?? undefined;
+        row["Product category"] = categoryMap?.[product.id] ?? undefined;
         row["Gift card"] = "FALSE";
         row["Published on online store"] = "TRUE";
         row.Status = "Active";
@@ -214,6 +215,7 @@ function buildProductRows(product: NormalizedProduct, activeFields: Set<string>)
     if (include("tags")) row.Tags = product.tags?.join(", ") ?? undefined;
     row.Vendor = product.vendor ?? "Beautifly";
     row.Type = product.productType ?? undefined;
+    row["Product category"] = categoryMap?.[product.id] ?? undefined;
     row["Gift card"] = "FALSE";
     row.SKU = product.sku;
     row.Barcode = product.barcode ?? undefined;
@@ -255,7 +257,7 @@ function buildProductRows(product: NormalizedProduct, activeFields: Set<string>)
   return rows;
 }
 
-export function buildCsvPayload(products: NormalizedProduct[], fieldKeys?: Set<string>): string {
+export function buildCsvPayload(products: NormalizedProduct[], fieldKeys?: Set<string>, categoryMap?: Record<string, string>): string {
   const activeFields: Set<string> =
     fieldKeys && fieldKeys.size > 0
       ? new Set([...fieldKeys, ...REQUIRED_FIELDS])
@@ -264,7 +266,7 @@ export function buildCsvPayload(products: NormalizedProduct[], fieldKeys?: Set<s
   const lines: string[] = [rowToLine(CSV_HEADERS)];
 
   for (const product of products) {
-    const rows = buildProductRows(product, activeFields);
+    const rows = buildProductRows(product, activeFields, categoryMap);
     for (const row of rows) {
       lines.push(rowToLine(CSV_HEADERS.map((h) => (row as Record<string, string | undefined>)[h])));
     }

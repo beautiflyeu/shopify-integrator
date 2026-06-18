@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Download, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useCategoryStore } from "@/stores/category";
 
 interface ExportCsvButtonProps {
   getProductIds: () => string[];
@@ -21,6 +22,7 @@ export function ExportCsvButton({
 }: ExportCsvButtonProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const getCategoryMap = useCategoryStore((s) => s.getCategoryMap);
 
   async function handleExport() {
     const ids = getProductIds();
@@ -33,7 +35,7 @@ export function ExportCsvButton({
       const res = await fetch("/api/export/csv", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productIds: ids, fieldKeys }),
+        body: JSON.stringify({ productIds: ids, fieldKeys, categoryMap: getCategoryMap() }),
       });
 
       if (!res.ok) {
