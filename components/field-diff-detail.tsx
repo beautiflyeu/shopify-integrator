@@ -1,5 +1,6 @@
 "use client";
 
+import { Switch } from "@/components/ui/switch";
 import { useSelectionStore } from "@/stores/selection";
 import { FieldDiffRow } from "@/components/field-diff-row";
 import { ExportCsvButton } from "@/components/export-csv-button";
@@ -33,7 +34,12 @@ export function FieldDiffDetail({
   fieldMap,
   allCategories,
 }: FieldDiffDetailProps) {
-  const { isFieldSelected, toggleField } = useSelectionStore();
+  const { isFieldSelected, toggleField, setAllFieldsForProduct } = useSelectionStore();
+
+  const changedKeys = fieldMap
+    .map((m) => String(m.pimKey))
+    .filter((k) => (diff.fields as Record<string, string | undefined>)[k] !== "unchanged");
+  const allChangedSelected = changedKeys.length === 0 || changedKeys.every((k) => isFieldSelected(productId, k));
 
   const changedCount = Object.values(diff.fields).filter((s) => s !== "unchanged").length;
   const selectedCount = fieldMap.filter((m) => {
@@ -66,7 +72,16 @@ export function FieldDiffDetail({
               <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground">Wartość PIM</th>
               <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground">Wartość Shopify</th>
               <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground">Status</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground">Akcja</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <Switch
+                    checked={allChangedSelected}
+                    onCheckedChange={(v) => setAllFieldsForProduct(productId, changedKeys, v)}
+                    size="sm"
+                  />
+                  <span>Synchronizacja</span>
+                </div>
+              </th>
             </tr>
           </thead>
           <tbody>

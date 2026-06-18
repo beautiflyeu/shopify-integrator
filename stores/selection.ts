@@ -15,6 +15,7 @@ interface SelectionState {
   setProductSelected: (id: string, selected: boolean) => void;
   toggleField: (productId: string, field: FieldKey) => void;
   setFieldSelected: (productId: string, field: FieldKey, selected: boolean) => void;
+  setAllFieldsForProduct: (productId: string, fieldKeys: FieldKey[], selected: boolean) => void;
   resetProduct: (productId: string) => void;
   reset: () => void;
 
@@ -66,6 +67,19 @@ export const useSelectionStore = create<SelectionState>((set, get) => ({
       const current = new Map(map.get(productId) ?? new Map<FieldKey, boolean>());
       current.set(field, selected);
       map.set(productId, current);
+      return { fieldSelections: map };
+    }),
+
+  setAllFieldsForProduct: (productId, fieldKeys, selected) =>
+    set((s) => {
+      const map = new Map(s.fieldSelections);
+      if (selected) {
+        map.delete(productId);
+      } else {
+        const current = new Map<FieldKey, boolean>();
+        fieldKeys.forEach((k) => current.set(k, false));
+        map.set(productId, current);
+      }
       return { fieldSelections: map };
     }),
 

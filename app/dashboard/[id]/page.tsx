@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { fetchProduct, ALL_INCLUDES } from "@/services/beautifly";
-import { fetchShopifyCategories } from "@/services/shopify-taxonomy";
 import { normalizeProduct } from "@/modules/pim/normalize";
 import { diffProduct } from "@/modules/diff/diffProduct";
 import { FIELD_MAP } from "@/config/field-map";
@@ -24,22 +23,13 @@ export default async function ProductDetailPage({ params }: Props) {
   let normalized = null;
   let diff = null;
   let raw = null;
-  let shopifyCategories: { id: string; fullName: string }[] = [];
 
   try {
-    [raw] = await Promise.all([
-      fetchProduct(Number(id), { lang: "pl", include: [...ALL_INCLUDES] }),
-    ]);
+    raw = await fetchProduct(Number(id), { lang: "pl", include: [...ALL_INCLUDES] });
     normalized = normalizeProduct(raw);
     diff = diffProduct(normalized, null);
   } catch (err) {
     error = err instanceof Error ? err.message : "Błąd pobierania produktu";
-  }
-
-  try {
-    shopifyCategories = await fetchShopifyCategories();
-  } catch {
-    // kategorie niedostępne — selector nadal działa z sugestiami
   }
 
   return (
@@ -85,7 +75,6 @@ export default async function ProductDetailPage({ params }: Props) {
                   productId={id}
                   productName={normalized.name}
                   productModel={normalized.productType}
-                  allCategories={shopifyCategories}
                 />
               </div>
               <FieldDiffDetail
@@ -93,7 +82,6 @@ export default async function ProductDetailPage({ params }: Props) {
                 normalized={normalized}
                 diff={diff}
                 fieldMap={FIELD_MAP}
-                allCategories={shopifyCategories}
               />
             </TabsContent>
           </Tabs>

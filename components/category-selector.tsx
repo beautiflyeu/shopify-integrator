@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { ChevronDown, X } from "lucide-react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { ChevronDown, X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface CategorySelectorProps {
@@ -9,33 +9,60 @@ interface CategorySelectorProps {
   onChange: (v: string | null) => void;
   suggestions: string[];
   allCategories: { id: string; fullName: string }[];
+  isLoading?: boolean;
+  onOpen?: () => void;
 }
 
-export function CategorySelector({ value, onChange, suggestions, allCategories }: CategorySelectorProps) {
+export function CategorySelector({
+  value,
+  onChange,
+  suggestions,
+  allCategories,
+  isLoading,
+  onOpen,
+}: CategorySelectorProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const ref = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) {
         setOpen(false);
         setQuery("");
+        setDebouncedQuery("");
       }
     }
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const lowerQuery = query.toLowerCase().trim();
+  function handleQueryChange(val: string) {
+    setQuery(val);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => setDebouncedQuery(val), 200);
+  }
 
-  const filteredSuggestions = lowerQuery
-    ? suggestions.filter((s) => s.toLowerCase().includes(lowerQuery))
-    : suggestions;
+  function handleOpen() {
+    setOpen((v) => !v);
+    if (!open) onOpen?.();
+  }
 
-  const filteredAll = lowerQuery
-    ? allCategories.filter((c) => c.fullName.toLowerCase().includes(lowerQuery)).slice(0, 50)
-    : [];
+  const lowerQuery = debouncedQuery.toLowerCase().trim();
+
+  const filteredSuggestions = useMemo(
+    () => lowerQuery ? suggestions.filter((s) => s.toLowerCase().includes(lowerQuery)) : suggestions,
+    [suggestions, lowerQuery]
+  );
+
+  const filteredAll = useMemo(
+    () => lowerQuery
+      ? allCategories.filter((c) => c.fullName.toLowerCase().includes(lowerQuery)).slice(0, 50)
+      : [],
+    [allCategories, lowerQuery]
+  );
 
   const showSuggestions = filteredSuggestions.length > 0;
 
@@ -43,13 +70,14 @@ export function CategorySelector({ value, onChange, suggestions, allCategories }
     onChange(category);
     setOpen(false);
     setQuery("");
+    setDebouncedQuery("");
   }
 
   return (
     <div ref={ref} className="relative w-full">
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={handleOpen}
         className={cn(
           "flex w-full items-center justify-between gap-2 rounded-md border border-border bg-background px-3 py-2 text-left text-sm transition-colors hover:bg-muted",
           open && "border-primary ring-1 ring-primary"
@@ -79,14 +107,21 @@ export function CategorySelector({ value, onChange, suggestions, allCategories }
               autoFocus
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => handleQueryChange(e.target.value)}
               placeholder="Szukaj kategorii…"
               className="w-full rounded bg-muted px-2 py-1.5 text-sm outline-none placeholder:text-muted-foreground"
             />
           </div>
 
           <div className="max-h-64 overflow-y-auto">
-            {showSuggestions && (
+            {isLoading && (
+              <div className="flex items-center gap-2 px-3 py-4 text-sm text-muted-foreground">
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                Ładowanie kategorii…
+              </div>
+            )}
+
+            {!isLoading && showSuggestions && (
               <>
                 <p className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Sugestie</p>
                 {filteredSuggestions.map((cat) => (
@@ -103,11 +138,11 @@ export function CategorySelector({ value, onChange, suggestions, allCategories }
                     {cat}
                   </button>
                 ))}
-                <div className="mx-3 my-1 border-t border-border" />
+                {filteredAll.length > 0 && <div className="mx-3 my-1 border-t border-border" />}
               </>
             )}
 
-            {filteredAll.length > 0 && (
+            {!isLoading && filteredAll.length > 0 && (
               <>
                 <p className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Wszystkie kategorie</p>
                 {filteredAll.map((c) => (
@@ -126,7 +161,7 @@ export function CategorySelector({ value, onChange, suggestions, allCategories }
               </>
             )}
 
-            {!showSuggestions && filteredAll.length === 0 && (
+            {!isLoading && !showSuggestions && filteredAll.length === 0 && (
               <p className="px-3 py-4 text-center text-sm text-muted-foreground">
                 {lowerQuery ? "Brak wyników" : "Zacznij pisać aby wyszukać"}
               </p>

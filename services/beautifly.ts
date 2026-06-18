@@ -107,7 +107,8 @@ export async function fetchAllProducts(
     all.push(...items);
 
     const total = json.meta?.total ?? json.meta?.total_count ?? null;
-    hasMore = items.length > 0 && total !== null && all.length < total;
+    const perPage = json.meta?.per_page ?? items.length;
+    hasMore = items.length >= perPage && (total === null || all.length < total);
     page++;
   }
 

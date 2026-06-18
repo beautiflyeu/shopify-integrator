@@ -1,5 +1,6 @@
 "use client";
 
+import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 
 interface FieldToggleProps {
@@ -10,29 +11,8 @@ interface FieldToggleProps {
 
 export function FieldToggle({ selected, onToggle, className }: FieldToggleProps) {
   return (
-    <div className={cn("flex gap-1", className)}>
-      <button
-        onClick={onToggle}
-        className={cn(
-          "rounded px-2 py-0.5 text-xs font-medium transition-colors",
-          selected
-            ? "bg-primary text-primary-foreground"
-            : "bg-muted text-muted-foreground hover:bg-muted/80"
-        )}
-      >
-        Synchronizuj
-      </button>
-      <button
-        onClick={onToggle}
-        className={cn(
-          "rounded px-2 py-0.5 text-xs font-medium transition-colors",
-          !selected
-            ? "bg-primary text-primary-foreground"
-            : "bg-muted text-muted-foreground hover:bg-muted/80"
-        )}
-      >
-        Pomiń
-      </button>
+    <div className={cn("flex items-center", className)}>
+      <Switch checked={selected} onCheckedChange={onToggle} size="sm" />
     </div>
   );
 }
