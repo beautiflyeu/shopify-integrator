@@ -695,7 +695,7 @@
                       "id": "HRHaK",
                       "name": "Title",
                       "fill": "$foreground",
-                      "content": "Diff Dashboard",
+                      "content": "Dashboard",
                       "fontFamily": "$font-primary",
                       "fontSize": 24,
                       "fontWeight": "700"
@@ -705,7 +705,7 @@
                       "id": "W1SzT",
                       "name": "Subtitle",
                       "fill": "$muted-foreground",
-                      "content": "Porównanie katalogu Beautifly PIM z Shopify",
+                      "content": "Produkty z PIM Beautifly",
                       "fontFamily": "$font-secondary",
                       "fontSize": 14,
                       "fontWeight": "normal"
@@ -724,8 +724,12 @@
                       "ref": "K7YkVC",
                       "name": "Filtry",
                       "descendants": {
+                        "qn7R9": {
+                          "enabled": true,
+                          "icon": "download"
+                        },
                         "Oxgpj": {
-                          "content": "Filtry"
+                          "content": "Eksportuj CSV"
                         }
                       }
                     },
@@ -736,7 +740,7 @@
                       "name": "Sync Selected",
                       "descendants": {
                         "a5mUs": {
-                          "content": "Synchronizuj zaznaczone (3)"
+                          "content": "Synchronizuj zaznaczone"
                         }
                       }
                     }
@@ -755,11 +759,31 @@
                   "id": "GKktT",
                   "type": "ref",
                   "ref": "RiI4Y",
-                  "name": "Nowe produkty",
+                  "name": "Łącznie",
                   "width": "fill_container",
+                  "fill": "$card",
                   "descendants": {
                     "J8BQEn": {
-                      "content": "Nowe produkty"
+                      "content": "Łącznie"
+                    },
+                    "V7cNt6": {
+                      "fill": "$muted-foreground"
+                    },
+                    "dkaVw": {
+                      "content": "183"
+                    }
+                  }
+                },
+                {
+                  "id": "dueHK",
+                  "type": "ref",
+                  "ref": "RiI4Y",
+                  "name": "Nowe",
+                  "width": "fill_container",
+                  "fill": "$color-info",
+                  "descendants": {
+                    "J8BQEn": {
+                      "content": "Nowe"
                     },
                     "V7cNt6": {
                       "fill": "$color-info-foreground"
@@ -770,11 +794,12 @@
                   }
                 },
                 {
-                  "id": "dueHK",
+                  "id": "w6L2tp",
                   "type": "ref",
                   "ref": "RiI4Y",
                   "name": "Zmienione",
                   "width": "fill_container",
+                  "fill": "$color-warning",
                   "descendants": {
                     "J8BQEn": {
                       "content": "Zmienione"
@@ -784,24 +809,6 @@
                     },
                     "dkaVw": {
                       "content": "118"
-                    }
-                  }
-                },
-                {
-                  "id": "w6L2tp",
-                  "type": "ref",
-                  "ref": "RiI4Y",
-                  "name": "Usunięte w PIM",
-                  "width": "fill_container",
-                  "descendants": {
-                    "J8BQEn": {
-                      "content": "Usunięte w PIM"
-                    },
-                    "V7cNt6": {
-                      "fill": "$color-error-foreground"
-                    },
-                    "dkaVw": {
-                      "content": "7"
                     }
                   }
                 },
@@ -955,6 +962,34 @@
                           "fontWeight": "500"
                         }
                       ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "QxuXT",
+                      "name": "Wymaga decyzji",
+                      "fill": "$background",
+                      "stroke": "$border",
+                      "strokeWidth": {
+                        "left": 1
+                      },
+                      "padding": [
+                        8,
+                        14
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "x55TJV",
+                          "name": "Label",
+                          "fill": "$muted-foreground",
+                          "content": "Wymaga decyzji",
+                          "fontFamily": "$font-primary",
+                          "fontSize": 13,
+                          "fontWeight": "500"
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1000,6 +1035,44 @@
                     },
                     {
                       "type": "frame",
+                      "id": "d9KoR",
+                      "name": "Header SKU",
+                      "width": 120,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "eKJtk",
+                          "name": "Label",
+                          "fill": "$muted-foreground",
+                          "content": "SKU",
+                          "fontFamily": "$font-primary",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "AWx4P",
+                      "name": "Header EAN",
+                      "width": 140,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "qNTHn",
+                          "name": "Label",
+                          "fill": "$muted-foreground",
+                          "content": "EAN",
+                          "fontFamily": "$font-primary",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
                       "id": "fiRIX",
                       "name": "Header Produkt",
                       "width": "fill_container",
@@ -1009,7 +1082,7 @@
                           "type": "text",
                           "id": "S9xWh",
                           "fill": "$muted-foreground",
-                          "content": "PRODUKT",
+                          "content": "NAZWA PRODUKTU",
                           "fontFamily": "$font-primary",
                           "fontSize": 12,
                           "fontWeight": "600"
@@ -1038,7 +1111,7 @@
                       "type": "frame",
                       "id": "Nv2Wj",
                       "name": "Header Pola zmienione",
-                      "width": 140,
+                      "width": 120,
                       "alignItems": "center",
                       "children": [
                         {
@@ -1046,42 +1119,6 @@
                           "id": "QlVAh",
                           "fill": "$muted-foreground",
                           "content": "POLA ZMIENIONE",
-                          "fontFamily": "$font-primary",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "d7kA6G",
-                      "name": "Header Ost. synchronizacja",
-                      "width": 160,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "GEMdu",
-                          "fill": "$muted-foreground",
-                          "content": "OST. SYNCHRONIZACJA",
-                          "fontFamily": "$font-primary",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "OjEvT",
-                      "name": "Header Akcje",
-                      "width": 100,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "MIHRm",
-                          "fill": "$muted-foreground",
-                          "content": "AKCJE",
                           "fontFamily": "$font-primary",
                           "fontSize": 12,
                           "fontWeight": "600"
@@ -1128,6 +1165,44 @@
                     },
                     {
                       "type": "frame",
+                      "id": "geS64",
+                      "name": "SKU",
+                      "width": 120,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "iRjHe",
+                          "name": "Val",
+                          "fill": "$muted-foreground",
+                          "content": "TS-BAND-001",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "TsS35",
+                      "name": "EAN",
+                      "width": 140,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "AFQWK",
+                          "name": "Val",
+                          "fill": "$muted-foreground",
+                          "content": "5901520001001",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
                       "id": "cznTF",
                       "width": "fill_container",
                       "layout": "vertical",
@@ -1140,16 +1215,7 @@
                           "content": "The Band T-Shirt",
                           "fontFamily": "$font-primary",
                           "fontSize": 14,
-                          "fontWeight": "600"
-                        },
-                        {
-                          "type": "text",
-                          "id": "awglI",
-                          "fill": "$muted-foreground",
-                          "content": "TS-BAND-001",
-                          "fontFamily": "$font-secondary",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
+                          "fontWeight": "500"
                         }
                       ]
                     },
@@ -1177,56 +1243,17 @@
                     {
                       "type": "frame",
                       "id": "QOQLi",
-                      "width": 140,
+                      "width": 120,
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
                           "id": "xNGX8",
-                          "fill": "$foreground",
-                          "content": "3 z 12",
+                          "fill": "$color-warning-foreground",
+                          "content": "3 pól",
                           "fontFamily": "$font-secondary",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "vJL0j",
-                      "width": 160,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "L2qjck",
-                          "fill": "$muted-foreground",
-                          "content": "2026-06-12 09:14",
-                          "fontFamily": "$font-secondary",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "HaJq4",
-                      "width": 100,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "id": "xLZEs",
-                          "type": "ref",
-                          "ref": "Xf9g4",
-                          "name": "Details Button",
-                          "descendants": {
-                            "Zstgn": {
-                              "enabled": true
-                            },
-                            "U1ikns": {
-                              "content": "Szczegóły"
-                            }
-                          }
+                          "fontSize": 12,
+                          "fontWeight": "500"
                         }
                       ]
                     }
@@ -1270,6 +1297,44 @@
                     },
                     {
                       "type": "frame",
+                      "id": "fpxIs",
+                      "name": "SKU",
+                      "width": 120,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "L6wzca",
+                          "name": "Val",
+                          "fill": "$muted-foreground",
+                          "content": "JK-DENIM-014",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "STbjq",
+                      "name": "EAN",
+                      "width": 140,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "JUO4w",
+                          "name": "Val",
+                          "fill": "$muted-foreground",
+                          "content": "—",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
                       "id": "uJShg",
                       "width": "fill_container",
                       "layout": "vertical",
@@ -1282,16 +1347,7 @@
                           "content": "Selvedge Denim Jacket",
                           "fontFamily": "$font-primary",
                           "fontSize": 14,
-                          "fontWeight": "600"
-                        },
-                        {
-                          "type": "text",
-                          "id": "JziCq",
-                          "fill": "$muted-foreground",
-                          "content": "JK-DENIM-014",
-                          "fontFamily": "$font-secondary",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
+                          "fontWeight": "500"
                         }
                       ]
                     },
@@ -1319,56 +1375,17 @@
                     {
                       "type": "frame",
                       "id": "KFv0M",
-                      "width": 140,
+                      "width": 120,
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
                           "id": "S2XEn",
-                          "fill": "$foreground",
+                          "fill": "$muted-foreground",
                           "content": "—",
                           "fontFamily": "$font-secondary",
-                          "fontSize": 13,
+                          "fontSize": 12,
                           "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "l8ULr",
-                      "width": 160,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "I6nUqR",
-                          "fill": "$muted-foreground",
-                          "content": "Nigdy",
-                          "fontFamily": "$font-secondary",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "HdM9l",
-                      "width": 100,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "id": "IH7gP",
-                          "type": "ref",
-                          "ref": "Xf9g4",
-                          "name": "Details Button",
-                          "descendants": {
-                            "Zstgn": {
-                              "enabled": true
-                            },
-                            "U1ikns": {
-                              "content": "Szczegóły"
-                            }
-                          }
                         }
                       ]
                     }
@@ -1405,6 +1422,44 @@
                     },
                     {
                       "type": "frame",
+                      "id": "UyYRW",
+                      "name": "SKU",
+                      "width": 120,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "WqNqw",
+                          "name": "Val",
+                          "fill": "$muted-foreground",
+                          "content": "BL-LTHR-022",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "f8uoIZ",
+                      "name": "EAN",
+                      "width": 140,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "z6Vam",
+                          "name": "Val",
+                          "fill": "$muted-foreground",
+                          "content": "5901520022034",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
                       "id": "axK4s",
                       "width": "fill_container",
                       "layout": "vertical",
@@ -1417,16 +1472,7 @@
                           "content": "Classic Leather Belt",
                           "fontFamily": "$font-primary",
                           "fontSize": 14,
-                          "fontWeight": "600"
-                        },
-                        {
-                          "type": "text",
-                          "id": "zDGbS",
-                          "fill": "$muted-foreground",
-                          "content": "BL-LTHR-022",
-                          "fontFamily": "$font-secondary",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
+                          "fontWeight": "500"
                         }
                       ]
                     },
@@ -1454,56 +1500,17 @@
                     {
                       "type": "frame",
                       "id": "RAVfh",
-                      "width": 140,
+                      "width": 120,
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
                           "id": "ZWSOw",
-                          "fill": "$foreground",
-                          "content": "0 z 9",
-                          "fontFamily": "$font-secondary",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "B93E7N",
-                      "width": 160,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "GqkOL",
                           "fill": "$muted-foreground",
-                          "content": "2026-06-15 18:02",
+                          "content": "—",
                           "fontFamily": "$font-secondary",
-                          "fontSize": 13,
+                          "fontSize": 12,
                           "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "NKdky",
-                      "width": 100,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "id": "TcVy6",
-                          "type": "ref",
-                          "ref": "Xf9g4",
-                          "name": "Details Button",
-                          "descendants": {
-                            "Zstgn": {
-                              "enabled": true
-                            },
-                            "U1ikns": {
-                              "content": "Szczegóły"
-                            }
-                          }
                         }
                       ]
                     }
@@ -1540,6 +1547,44 @@
                     },
                     {
                       "type": "frame",
+                      "id": "GMvJE",
+                      "name": "SKU",
+                      "width": 120,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "k5Qy1",
+                          "name": "Val",
+                          "fill": "$muted-foreground",
+                          "content": "SC-WOOL-007",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "i3QYLV",
+                      "name": "EAN",
+                      "width": 140,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "axfXL",
+                          "name": "Val",
+                          "fill": "$muted-foreground",
+                          "content": "—",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
                       "id": "J3leiL",
                       "width": "fill_container",
                       "layout": "vertical",
@@ -1552,16 +1597,7 @@
                           "content": "Merino Wool Scarf",
                           "fontFamily": "$font-primary",
                           "fontSize": 14,
-                          "fontWeight": "600"
-                        },
-                        {
-                          "type": "text",
-                          "id": "Riiut",
-                          "fill": "$muted-foreground",
-                          "content": "SC-WOOL-007",
-                          "fontFamily": "$font-secondary",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
+                          "fontWeight": "500"
                         }
                       ]
                     },
@@ -1589,56 +1625,17 @@
                     {
                       "type": "frame",
                       "id": "ld2sq",
-                      "width": 140,
+                      "width": 120,
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
                           "id": "JWZ1J",
-                          "fill": "$foreground",
-                          "content": "2 z 10",
+                          "fill": "$color-warning-foreground",
+                          "content": "2 pól",
                           "fontFamily": "$font-secondary",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "c1bVI",
-                      "width": 160,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "zDcAO",
-                          "fill": "$muted-foreground",
-                          "content": "2026-06-10 11:40",
-                          "fontFamily": "$font-secondary",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "MreYt",
-                      "width": 100,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "id": "VmJmw",
-                          "type": "ref",
-                          "ref": "Xf9g4",
-                          "name": "Details Button",
-                          "descendants": {
-                            "Zstgn": {
-                              "enabled": true
-                            },
-                            "U1ikns": {
-                              "content": "Szczegóły"
-                            }
-                          }
+                          "fontSize": 12,
+                          "fontWeight": "500"
                         }
                       ]
                     }
@@ -1675,6 +1672,44 @@
                     },
                     {
                       "type": "frame",
+                      "id": "pYfpB",
+                      "name": "SKU",
+                      "width": 120,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Poceq",
+                          "name": "Val",
+                          "fill": "$muted-foreground",
+                          "content": "BT-SUEDE-031",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "m5drNd",
+                      "name": "EAN",
+                      "width": 140,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "LMX5Z",
+                          "name": "Val",
+                          "fill": "$muted-foreground",
+                          "content": "5901520031067",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
                       "id": "gC8eK",
                       "width": "fill_container",
                       "layout": "vertical",
@@ -1687,16 +1722,7 @@
                           "content": "Suede Chelsea Boots",
                           "fontFamily": "$font-primary",
                           "fontSize": 14,
-                          "fontWeight": "600"
-                        },
-                        {
-                          "type": "text",
-                          "id": "d4n5B",
-                          "fill": "$muted-foreground",
-                          "content": "BT-SUEDE-031",
-                          "fontFamily": "$font-secondary",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
+                          "fontWeight": "500"
                         }
                       ]
                     },
@@ -1724,56 +1750,17 @@
                     {
                       "type": "frame",
                       "id": "D15n2",
-                      "width": 140,
+                      "width": 120,
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
                           "id": "qDwxA",
-                          "fill": "$foreground",
+                          "fill": "$muted-foreground",
                           "content": "—",
                           "fontFamily": "$font-secondary",
-                          "fontSize": 13,
+                          "fontSize": 12,
                           "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "i2gBkd",
-                      "width": 160,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "hEdHC",
-                          "fill": "$muted-foreground",
-                          "content": "2026-05-28 08:21",
-                          "fontFamily": "$font-secondary",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "ykkpc",
-                      "width": 100,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "id": "zHRx3",
-                          "type": "ref",
-                          "ref": "Xf9g4",
-                          "name": "Details Button",
-                          "descendants": {
-                            "Zstgn": {
-                              "enabled": true
-                            },
-                            "U1ikns": {
-                              "content": "Szczegóły"
-                            }
-                          }
                         }
                       ]
                     }
@@ -1817,6 +1804,44 @@
                     },
                     {
                       "type": "frame",
+                      "id": "DmFBT",
+                      "name": "SKU",
+                      "width": 120,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "l87FwQ",
+                          "name": "Val",
+                          "fill": "$muted-foreground",
+                          "content": "SH-OXFRD-019",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "W9XbBt",
+                      "name": "EAN",
+                      "width": 140,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Vbx9k",
+                          "name": "Val",
+                          "fill": "$muted-foreground",
+                          "content": "—",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
                       "id": "vrvMQ",
                       "width": "fill_container",
                       "layout": "vertical",
@@ -1829,16 +1854,7 @@
                           "content": "Oxford Cotton Shirt",
                           "fontFamily": "$font-primary",
                           "fontSize": 14,
-                          "fontWeight": "600"
-                        },
-                        {
-                          "type": "text",
-                          "id": "a91Z6p",
-                          "fill": "$muted-foreground",
-                          "content": "SH-OXFRD-019",
-                          "fontFamily": "$font-secondary",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
+                          "fontWeight": "500"
                         }
                       ]
                     },
@@ -1866,56 +1882,17 @@
                     {
                       "type": "frame",
                       "id": "CZm8P",
-                      "width": 140,
+                      "width": 120,
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
                           "id": "fn3Z9",
-                          "fill": "$foreground",
-                          "content": "1 z 12",
+                          "fill": "$color-warning-foreground",
+                          "content": "1 pół",
                           "fontFamily": "$font-secondary",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "mi4xV",
-                      "width": 160,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "ylLq8",
-                          "fill": "$muted-foreground",
-                          "content": "2026-06-14 21:55",
-                          "fontFamily": "$font-secondary",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "pZ7im",
-                      "width": 100,
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "id": "FHTWK",
-                          "type": "ref",
-                          "ref": "Xf9g4",
-                          "name": "Details Button",
-                          "descendants": {
-                            "Zstgn": {
-                              "enabled": true
-                            },
-                            "U1ikns": {
-                              "content": "Szczegóły"
-                            }
-                          }
+                          "fontSize": 12,
+                          "fontWeight": "500"
                         }
                       ]
                     }
@@ -2152,6 +2129,76 @@
             },
             {
               "type": "frame",
+              "id": "f4m64",
+              "name": "Tab Bar",
+              "width": "fill_container",
+              "fill": "$muted",
+              "cornerRadius": "$radius-m",
+              "gap": 2,
+              "padding": 4,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Dz0Ws",
+                  "name": "Tab Dane produktu",
+                  "fill": "#FFFFFF00",
+                  "padding": [
+                    6,
+                    12
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "GUhbq",
+                      "name": "Label",
+                      "fill": "$muted-foreground",
+                      "content": "Dane produktu",
+                      "fontFamily": "$font-primary",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "LxOz3",
+                  "name": "Tab Shopify",
+                  "fill": "$background",
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000018",
+                    "offset": {
+                      "x": 0,
+                      "y": 1
+                    },
+                    "blur": 3
+                  },
+                  "padding": [
+                    6,
+                    12
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "qCC0n",
+                      "name": "Label",
+                      "fill": "$foreground",
+                      "content": "Shopify",
+                      "fontFamily": "$font-primary",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
               "id": "uWDve",
               "name": "Field Diff",
               "clip": true,
@@ -2226,15 +2273,36 @@
                     },
                     {
                       "type": "frame",
-                      "id": "y0bMY",
+                      "id": "crc3w",
+                      "name": "Header Status",
+                      "width": 90,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "g48v6Y",
+                          "name": "Label",
+                          "fill": "$muted-foreground",
+                          "content": "STATUS",
+                          "fontFamily": "$font-primary",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "nofHa",
+                      "name": "Header Akcja",
                       "width": 190,
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
-                          "id": "aBKPm",
+                          "id": "kdAF6",
+                          "name": "Label",
                           "fill": "$muted-foreground",
-                          "content": "DECYZJA",
+                          "content": "AKCJA",
                           "fontFamily": "$font-primary",
                           "fontSize": 12,
                           "fontWeight": "600"
@@ -2326,15 +2394,35 @@
                     },
                     {
                       "type": "frame",
-                      "id": "FgFyG",
+                      "id": "N7wxb",
+                      "name": "Status",
+                      "width": 90,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "RFADf",
+                          "name": "Val",
+                          "fill": "$color-warning-foreground",
+                          "content": "Zmienione",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "dr91i",
+                      "name": "Akcja",
                       "width": 190,
                       "alignItems": "center",
                       "children": [
                         {
-                          "id": "Z8lJBm",
+                          "id": "O4HEJf",
                           "type": "ref",
                           "ref": "v22it",
-                          "name": "Field Toggle"
+                          "name": "Toggle"
                         }
                       ]
                     }
@@ -2423,15 +2511,35 @@
                     },
                     {
                       "type": "frame",
-                      "id": "g6g4U",
+                      "id": "KJdg4",
+                      "name": "Status",
+                      "width": 90,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "XxutV",
+                          "name": "Val",
+                          "fill": "$color-warning-foreground",
+                          "content": "Zmienione",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "yrGSW",
+                      "name": "Akcja",
                       "width": 190,
                       "alignItems": "center",
                       "children": [
                         {
-                          "id": "T2FKu",
+                          "id": "T6VFIA",
                           "type": "ref",
                           "ref": "v22it",
-                          "name": "Field Toggle"
+                          "name": "Toggle"
                         }
                       ]
                     }
@@ -2520,17 +2628,38 @@
                     },
                     {
                       "type": "frame",
-                      "id": "H2lGKf",
+                      "id": "iLN3k",
+                      "name": "Status",
+                      "width": 90,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "v5a41",
+                          "name": "Val",
+                          "fill": "$muted-foreground",
+                          "content": "Brak zmian",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "amCqC",
+                      "name": "Akcja",
                       "width": 190,
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
-                          "id": "lffI4",
+                          "id": "cbkLK",
+                          "name": "Val",
                           "fill": "$muted-foreground",
-                          "content": "Brak zmian",
+                          "content": "—",
                           "fontFamily": "$font-secondary",
-                          "fontSize": 12,
+                          "fontSize": 13,
                           "fontWeight": "normal"
                         }
                       ]
@@ -2620,15 +2749,35 @@
                     },
                     {
                       "type": "frame",
-                      "id": "ipI2r",
+                      "id": "KP1Bw",
+                      "name": "Status",
+                      "width": 90,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "VXgj8",
+                          "name": "Val",
+                          "fill": "$color-warning-foreground",
+                          "content": "Zmienione",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "kEknT",
+                      "name": "Akcja",
                       "width": 190,
                       "alignItems": "center",
                       "children": [
                         {
-                          "id": "pk0o1",
+                          "id": "pgjC9",
                           "type": "ref",
                           "ref": "v22it",
-                          "name": "Field Toggle"
+                          "name": "Toggle"
                         }
                       ]
                     }
@@ -2717,31 +2866,35 @@
                     },
                     {
                       "type": "frame",
-                      "id": "MFMxV",
+                      "id": "gErRF",
+                      "name": "Status",
+                      "width": 90,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "JnUst",
+                          "name": "Val",
+                          "fill": "$color-warning-foreground",
+                          "content": "Zmienione",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "H9JKUd",
+                      "name": "Akcja",
                       "width": 190,
                       "alignItems": "center",
                       "children": [
                         {
-                          "id": "ogEC4",
+                          "id": "PRuFq",
                           "type": "ref",
                           "ref": "v22it",
-                          "name": "Field Toggle",
-                          "descendants": {
-                            "mhgQ5": {
-                              "fill": "$secondary"
-                            },
-                            "YYwtN": {
-                              "fill": "$secondary-foreground",
-                              "fontWeight": "600"
-                            },
-                            "tWMU8": {
-                              "fill": "$background"
-                            },
-                            "W9kCn": {
-                              "fill": "$muted-foreground",
-                              "fontWeight": "500"
-                            }
-                          }
+                          "name": "Toggle"
                         }
                       ]
                     }
@@ -2830,15 +2983,35 @@
                     },
                     {
                       "type": "frame",
-                      "id": "c8s7Un",
+                      "id": "yctuT",
+                      "name": "Status",
+                      "width": 90,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "xF1b2",
+                          "name": "Val",
+                          "fill": "$color-warning-foreground",
+                          "content": "Zmienione",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "N7Q65",
+                      "name": "Akcja",
                       "width": 190,
                       "alignItems": "center",
                       "children": [
                         {
-                          "id": "RSrLI",
+                          "id": "EpO6B",
                           "type": "ref",
                           "ref": "v22it",
-                          "name": "Field Toggle"
+                          "name": "Toggle"
                         }
                       ]
                     }
@@ -2927,17 +3100,38 @@
                     },
                     {
                       "type": "frame",
-                      "id": "Ct3pu",
+                      "id": "DvJY5",
+                      "name": "Status",
+                      "width": 90,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "czKcQ",
+                          "name": "Val",
+                          "fill": "$muted-foreground",
+                          "content": "Brak zmian",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "pWWpn",
+                      "name": "Akcja",
                       "width": 190,
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
-                          "id": "vqDLK",
+                          "id": "W984t",
+                          "name": "Val",
                           "fill": "$muted-foreground",
-                          "content": "Brak zmian",
+                          "content": "—",
                           "fontFamily": "$font-secondary",
-                          "fontSize": 12,
+                          "fontSize": 13,
                           "fontWeight": "normal"
                         }
                       ]
@@ -3027,17 +3221,38 @@
                     },
                     {
                       "type": "frame",
-                      "id": "iuCjS",
+                      "id": "r9yyrg",
+                      "name": "Status",
+                      "width": 90,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "BriWS",
+                          "name": "Val",
+                          "fill": "$muted-foreground",
+                          "content": "Brak zmian",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "EWgpv",
+                      "name": "Akcja",
                       "width": 190,
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "text",
-                          "id": "oLn6S",
+                          "id": "Y3DeT",
+                          "name": "Val",
                           "fill": "$muted-foreground",
-                          "content": "Brak zmian",
+                          "content": "—",
                           "fontFamily": "$font-secondary",
-                          "fontSize": 12,
+                          "fontSize": 13,
                           "fontWeight": "normal"
                         }
                       ]
@@ -5227,6 +5442,1515 @@
                       "fontFamily": "$font-secondary",
                       "fontSize": 10,
                       "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "PRnw5",
+      "x": 3449,
+      "y": -136,
+      "name": "Product Detail — Dane produktu",
+      "clip": true,
+      "width": 1440,
+      "height": 1024,
+      "fill": "$background",
+      "children": [
+        {
+          "id": "fpYo8",
+          "type": "ref",
+          "ref": "yvNzL",
+          "name": "Sidebar",
+          "height": 1024,
+          "descendants": {
+            "uQlfB": {
+              "children": [
+                {
+                  "id": "P45LGz",
+                  "type": "ref",
+                  "ref": "I5fPXu",
+                  "name": "Dashboard",
+                  "descendants": {
+                    "pwjds": {
+                      "icon": "layout-dashboard"
+                    },
+                    "LI2Cv": {
+                      "content": "Dashboard"
+                    }
+                  }
+                },
+                {
+                  "id": "M6vuKZ",
+                  "type": "ref",
+                  "ref": "I5fPXu",
+                  "name": "Sync Queue",
+                  "descendants": {
+                    "pwjds": {
+                      "icon": "list-checks"
+                    },
+                    "LI2Cv": {
+                      "content": "Sync Queue"
+                    }
+                  }
+                },
+                {
+                  "id": "uWmAE",
+                  "type": "ref",
+                  "ref": "I5fPXu",
+                  "name": "Logs",
+                  "descendants": {
+                    "pwjds": {
+                      "icon": "scroll-text"
+                    },
+                    "LI2Cv": {
+                      "content": "Logi"
+                    }
+                  }
+                },
+                {
+                  "id": "N3n8R",
+                  "type": "ref",
+                  "ref": "I5fPXu",
+                  "name": "Settings",
+                  "descendants": {
+                    "pwjds": {
+                      "icon": "settings"
+                    },
+                    "LI2Cv": {
+                      "content": "Ustawienia"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "frame",
+          "id": "rfd6N",
+          "name": "Main",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": 32,
+          "children": [
+            {
+              "type": "frame",
+              "id": "ypkyq",
+              "name": "Breadcrumbs",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "j0dpC6",
+                  "name": "Dash",
+                  "fill": "$muted-foreground",
+                  "content": "Dashboard",
+                  "fontFamily": "$font-secondary",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "icon",
+                  "id": "Y9dZXa",
+                  "name": "Sep",
+                  "width": 14,
+                  "height": 14,
+                  "icon": "chevron-right",
+                  "library": "lucide",
+                  "fill": "$muted-foreground"
+                },
+                {
+                  "type": "text",
+                  "id": "iEifp",
+                  "name": "Prod",
+                  "fill": "$foreground",
+                  "content": "Scrub Pro",
+                  "fontFamily": "$font-secondary",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "nGhwa",
+              "name": "Product Header",
+              "width": "fill_container",
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "w1IM7",
+                  "name": "Title Block",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "znMAS",
+                      "name": "Title Row",
+                      "gap": 10,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "SRq7E",
+                          "name": "Name",
+                          "fill": "$foreground",
+                          "content": "Scrub Pro",
+                          "fontFamily": "$font-primary",
+                          "fontSize": 22,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "id": "n7XhCg",
+                          "type": "ref",
+                          "ref": "Xy9CA",
+                          "name": "Status",
+                          "fill": "$color-info",
+                          "descendants": {
+                            "TvNux": {
+                              "content": "Nowy",
+                              "fill": "$color-info-foreground"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "xvvKB",
+                      "name": "Meta",
+                      "fill": "$muted-foreground",
+                      "content": "PIM ID: 19  ·  SKU: SCRUB-PRO-001  ·  Shopify ID: —",
+                      "fontFamily": "$font-secondary",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "wjenJ",
+                  "name": "Actions",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "id": "srjHw",
+                      "type": "ref",
+                      "ref": "K7YkVC",
+                      "name": "Skip",
+                      "descendants": {
+                        "qn7R9": {
+                          "enabled": false
+                        },
+                        "Oxgpj": {
+                          "content": "Pomiń produkt"
+                        }
+                      }
+                    },
+                    {
+                      "id": "IA5aE",
+                      "type": "ref",
+                      "ref": "XXiNe",
+                      "name": "Sync",
+                      "descendants": {
+                        "a5mUs": {
+                          "content": "Synchronizuj wybrane pola"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "D1Cmk6",
+              "name": "Separator",
+              "fill": "$border",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "j13twW",
+              "name": "Tab Bar",
+              "fill": "$muted",
+              "cornerRadius": "$radius-m",
+              "gap": 2,
+              "padding": 4,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "WhTsT",
+                  "name": "Tab Dane produktu",
+                  "fill": "$background",
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000018",
+                    "offset": {
+                      "x": 0,
+                      "y": 1
+                    },
+                    "blur": 3
+                  },
+                  "padding": [
+                    6,
+                    12
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "X4Bwl7",
+                      "name": "Label",
+                      "fill": "$foreground",
+                      "content": "Dane produktu",
+                      "fontFamily": "$font-primary",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "WPe5B",
+                  "name": "Tab Shopify",
+                  "fill": "#FFFFFF00",
+                  "padding": [
+                    6,
+                    12
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "r81qiD",
+                      "name": "Label",
+                      "fill": "$muted-foreground",
+                      "content": "Shopify",
+                      "fontFamily": "$font-primary",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qeO77",
+              "name": "Dane produktu Content",
+              "clip": true,
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Q7NpF",
+                  "name": "Badges",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "s6WSQ",
+                      "name": "BEAUTIFLY",
+                      "fill": "$secondary",
+                      "cornerRadius": "$radius-pill",
+                      "stroke": "$border",
+                      "strokeWidth": 1,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ncXQf",
+                          "name": "Label",
+                          "fill": "$secondary-foreground",
+                          "content": "BEAUTIFLY",
+                          "fontFamily": "$font-primary",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "KYYbG",
+                      "name": "Peeling",
+                      "fill": "$background",
+                      "cornerRadius": "$radius-pill",
+                      "stroke": "$border",
+                      "strokeWidth": 1,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "wOXHB",
+                          "name": "Label",
+                          "fill": "$foreground",
+                          "content": "Peeling",
+                          "fontFamily": "$font-primary",
+                          "fontSize": 11,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Vtnev",
+                      "name": "5901520019001",
+                      "fill": "$background",
+                      "cornerRadius": "$radius-pill",
+                      "stroke": "$border",
+                      "strokeWidth": 1,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "RLxJD",
+                          "name": "Label",
+                          "fill": "$muted-foreground",
+                          "content": "5901520019001",
+                          "fontFamily": "$font-primary",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "giorw",
+                      "name": "Dostępny",
+                      "fill": "$background",
+                      "cornerRadius": "$radius-pill",
+                      "stroke": "$border",
+                      "strokeWidth": 1,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "v8yFJ7",
+                          "name": "Label",
+                          "fill": "$foreground",
+                          "content": "Dostępny",
+                          "fontFamily": "$font-primary",
+                          "fontSize": 11,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "pnVYb",
+                      "name": "450 g",
+                      "fill": "$background",
+                      "cornerRadius": "$radius-pill",
+                      "stroke": "$border",
+                      "strokeWidth": 1,
+                      "padding": [
+                        4,
+                        10
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "dkm7j",
+                          "name": "Label",
+                          "fill": "$muted-foreground",
+                          "content": "450 g",
+                          "fontFamily": "$font-primary",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "nh3j8",
+                  "name": "Main Grid",
+                  "width": "fill_container",
+                  "gap": 24,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "HhBXq",
+                      "name": "Gallery",
+                      "width": 320,
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "Ym2ZG",
+                          "name": "Main Image",
+                          "width": 320,
+                          "height": 240,
+                          "fill": "$muted",
+                          "cornerRadius": "$radius-m",
+                          "stroke": "$border",
+                          "strokeWidth": 1,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "WpUsX",
+                              "name": "Placeholder",
+                              "width": 48,
+                              "height": 48,
+                              "icon": "package",
+                              "library": "lucide",
+                              "fill": "$muted-foreground"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "cVFq8",
+                          "name": "Thumbnails",
+                          "gap": 8,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "ehmyJ",
+                              "name": "Thumb 1",
+                              "width": 68,
+                              "height": 52,
+                              "fill": "$muted",
+                              "stroke": "$primary",
+                              "strokeWidth": 2
+                            },
+                            {
+                              "type": "frame",
+                              "id": "G3KP54",
+                              "name": "Thumb 2",
+                              "width": 68,
+                              "height": 52,
+                              "fill": "$muted",
+                              "stroke": "$border",
+                              "strokeWidth": 1
+                            },
+                            {
+                              "type": "frame",
+                              "id": "qpHvk",
+                              "name": "Thumb 3",
+                              "width": 68,
+                              "height": 52,
+                              "fill": "$muted",
+                              "stroke": "$border",
+                              "strokeWidth": 1
+                            },
+                            {
+                              "type": "frame",
+                              "id": "alW5y",
+                              "name": "Thumb 4",
+                              "width": 68,
+                              "height": 52,
+                              "fill": "$muted",
+                              "stroke": "$border",
+                              "strokeWidth": 1
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "h16ZX",
+                      "name": "Product Info",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "A0EH4t",
+                          "name": "Prices",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "O1C9B",
+                              "name": "PLN",
+                              "gap": 16,
+                              "alignItems": "end",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "ltqXq",
+                                  "name": "Netto",
+                                  "fill": "$foreground",
+                                  "content": "89,00 zł",
+                                  "fontFamily": "$font-primary",
+                                  "fontSize": 24,
+                                  "fontWeight": "700"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "tN3XS",
+                                  "name": "NettoLabel",
+                                  "fill": "$muted-foreground",
+                                  "content": "netto",
+                                  "fontFamily": "$font-secondary",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "s7xarm",
+                                  "name": "Brutto",
+                                  "fill": "$muted-foreground",
+                                  "content": "109,47 zł",
+                                  "fontFamily": "$font-primary",
+                                  "fontSize": 15,
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "eHE4J",
+                                  "name": "BruttoLabel",
+                                  "fill": "$muted-foreground",
+                                  "content": "brutto",
+                                  "fontFamily": "$font-secondary",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "q6YFvk",
+                              "name": "EUR",
+                              "gap": 16,
+                              "alignItems": "end",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "e6XZR",
+                                  "name": "Netto",
+                                  "fill": "$muted-foreground",
+                                  "content": "20,90 €",
+                                  "fontFamily": "$font-primary",
+                                  "fontSize": 15,
+                                  "fontWeight": "500"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "vSMsN",
+                                  "name": "NettoLabel",
+                                  "fill": "$muted-foreground",
+                                  "content": "netto",
+                                  "fontFamily": "$font-secondary",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "tYxCl",
+                                  "name": "Brutto",
+                                  "fill": "$muted-foreground",
+                                  "content": "25,71 €",
+                                  "fontFamily": "$font-primary",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "YWo2i",
+                                  "name": "BruttoLabel",
+                                  "fill": "$muted-foreground",
+                                  "content": "brutto",
+                                  "fontFamily": "$font-secondary",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "w6Ric2",
+                          "name": "Sep1",
+                          "fill": "$border",
+                          "width": "fill_container",
+                          "height": 1
+                        },
+                        {
+                          "type": "frame",
+                          "id": "c5NTtV",
+                          "name": "Stock",
+                          "gap": 6,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "vKy3J",
+                              "name": "Qty",
+                              "fill": "$foreground",
+                              "content": "24",
+                              "fontFamily": "$font-primary",
+                              "fontSize": 28,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "text",
+                              "id": "vdpmq",
+                              "name": "Unit",
+                              "fill": "$muted-foreground",
+                              "content": "szt. dostępnych",
+                              "fontFamily": "$font-secondary",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "rectangle",
+                          "id": "M0QfXP",
+                          "name": "Sep2",
+                          "fill": "$border",
+                          "width": "fill_container",
+                          "height": 1
+                        },
+                        {
+                          "type": "frame",
+                          "id": "q5YgQF",
+                          "name": "Dimensions",
+                          "layout": "vertical",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "MVCZC",
+                              "name": "DimLabel",
+                              "fill": "$muted-foreground",
+                              "content": "Wymiary opakowania",
+                              "fontFamily": "$font-primary",
+                              "fontSize": 11,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "JhMEa",
+                              "name": "DimGrid",
+                              "gap": 16,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "ZOSYb",
+                                  "name": "Waga brutto",
+                                  "layout": "vertical",
+                                  "gap": 2,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "rQpdM",
+                                      "name": "Label",
+                                      "fill": "$muted-foreground",
+                                      "content": "Waga brutto",
+                                      "fontFamily": "$font-secondary",
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "tiJPW",
+                                      "name": "Val",
+                                      "fill": "$foreground",
+                                      "content": "450 g",
+                                      "fontFamily": "$font-primary",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "d6cWhz",
+                                  "name": "Waga netto",
+                                  "layout": "vertical",
+                                  "gap": 2,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "X810is",
+                                      "name": "Label",
+                                      "fill": "$muted-foreground",
+                                      "content": "Waga netto",
+                                      "fontFamily": "$font-secondary",
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "z0QZc",
+                                      "name": "Val",
+                                      "fill": "$foreground",
+                                      "content": "380 g",
+                                      "fontFamily": "$font-primary",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "YKkLj",
+                                  "name": "Wysokość",
+                                  "layout": "vertical",
+                                  "gap": 2,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "K9ISOg",
+                                      "name": "Label",
+                                      "fill": "$muted-foreground",
+                                      "content": "Wysokość",
+                                      "fontFamily": "$font-secondary",
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "vaz2R",
+                                      "name": "Val",
+                                      "fill": "$foreground",
+                                      "content": "12 cm",
+                                      "fontFamily": "$font-primary",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "jkQO8",
+                                  "name": "Szerokość",
+                                  "layout": "vertical",
+                                  "gap": 2,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "QU3K7",
+                                      "name": "Label",
+                                      "fill": "$muted-foreground",
+                                      "content": "Szerokość",
+                                      "fontFamily": "$font-secondary",
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "BCLms",
+                                      "name": "Val",
+                                      "fill": "$foreground",
+                                      "content": "8 cm",
+                                      "fontFamily": "$font-primary",
+                                      "fontSize": 13,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "rectangle",
+                  "id": "gUNja",
+                  "name": "Sep Main",
+                  "fill": "$border",
+                  "width": "fill_container",
+                  "height": 1
+                },
+                {
+                  "type": "frame",
+                  "id": "ooj3H",
+                  "name": "Description",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "C6oQn9",
+                      "name": "Label",
+                      "fill": "$muted-foreground",
+                      "content": "Opis",
+                      "fontFamily": "$font-primary",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "C8tL3",
+                      "name": "Text",
+                      "fill": "$foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Scrub Pro to profesjonalny peeling do ciała na bazie naturalnych składników, który mechanicznie złuszcza martwy naskórek. Formuła bogata w oleje roślinne intensywnie nawilża skórę.",
+                      "fontFamily": "$font-secondary",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "SqK8m",
+                  "name": "Short Descriptions",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Ibt18",
+                      "name": "Label",
+                      "fill": "$muted-foreground",
+                      "content": "Krótkie opisy",
+                      "fontFamily": "$font-primary",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "FT0B7",
+                      "name": "Item 1",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "EmEZJ",
+                          "name": "Num",
+                          "fill": "$muted-foreground",
+                          "content": "1.",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "R9frb",
+                          "name": "Text",
+                          "fill": "$foreground",
+                          "content": "Mechanicznie złuszcza martwy naskórek dzięki drobinkom cukru",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "CW12G",
+                      "name": "Item 2",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ENKNc",
+                          "name": "Num",
+                          "fill": "$muted-foreground",
+                          "content": "2.",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Qsjwd",
+                          "name": "Text",
+                          "fill": "$foreground",
+                          "content": "Nawilża i regeneruje skórę – bogaty w masło shea i olej arganowy",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "kq6qV",
+                  "name": "USP",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "deqVz",
+                      "name": "USP item",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "VmeiR",
+                          "name": "Check",
+                          "width": 14,
+                          "height": 14,
+                          "icon": "circle-check",
+                          "library": "lucide",
+                          "fill": "#22c55e"
+                        },
+                        {
+                          "type": "text",
+                          "id": "IXPDB",
+                          "name": "Text",
+                          "fill": "$foreground",
+                          "content": "Formuła wegańska i cruelty-free",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "eEqkJ",
+                      "name": "USP item",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "woYul",
+                          "name": "Check",
+                          "width": 14,
+                          "height": 14,
+                          "icon": "circle-check",
+                          "library": "lucide",
+                          "fill": "#22c55e"
+                        },
+                        {
+                          "type": "text",
+                          "id": "jp6Bw",
+                          "name": "Text",
+                          "fill": "$foreground",
+                          "content": "Certyfikat ECOCERT – składniki naturalne",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "rectangle",
+                  "id": "ffXiR",
+                  "name": "Sep Params",
+                  "fill": "$border",
+                  "width": "fill_container",
+                  "height": 1
+                },
+                {
+                  "type": "frame",
+                  "id": "BOvQQ",
+                  "name": "Parameters",
+                  "clip": true,
+                  "width": "fill_container",
+                  "cornerRadius": "$radius-m",
+                  "stroke": "$border",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "c8A0y",
+                      "name": "Title Row",
+                      "width": "fill_container",
+                      "fill": "$background",
+                      "padding": [
+                        10,
+                        14
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "lT1xq",
+                          "name": "Title",
+                          "fill": "$foreground",
+                          "content": "Parametry techniczne",
+                          "fontFamily": "$font-primary",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "d1nq9",
+                      "name": "Typ produktu",
+                      "width": "fill_container",
+                      "fill": "$muted",
+                      "stroke": "$border",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "hGCGu",
+                          "name": "L",
+                          "width": 200,
+                          "padding": [
+                            7,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "lsVU3",
+                              "name": "K",
+                              "fill": "$muted-foreground",
+                              "content": "Typ produktu",
+                              "fontFamily": "$font-secondary",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "okWos",
+                          "name": "R",
+                          "width": "fill_container",
+                          "padding": [
+                            7,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "ktgYy",
+                              "name": "V",
+                              "fill": "$foreground",
+                              "content": "Peeling ciała",
+                              "fontFamily": "$font-secondary",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "EQk1f",
+                      "name": "Pojemność",
+                      "width": "fill_container",
+                      "fill": "$background",
+                      "stroke": "$border",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "L551wo",
+                          "name": "L",
+                          "width": 200,
+                          "padding": [
+                            7,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "nVU4j",
+                              "name": "K",
+                              "fill": "$muted-foreground",
+                              "content": "Pojemność",
+                              "fontFamily": "$font-secondary",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "MZVQm",
+                          "name": "R",
+                          "width": "fill_container",
+                          "padding": [
+                            7,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "T3LpW4",
+                              "name": "V",
+                              "fill": "$foreground",
+                              "content": "200 ml",
+                              "fontFamily": "$font-secondary",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "FHoWh",
+                      "name": "Przeznaczenie",
+                      "width": "fill_container",
+                      "fill": "$muted",
+                      "stroke": "$border",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "niEmZ",
+                          "name": "L",
+                          "width": 200,
+                          "padding": [
+                            7,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "QioaK",
+                              "name": "K",
+                              "fill": "$muted-foreground",
+                              "content": "Przeznaczenie",
+                              "fontFamily": "$font-secondary",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "XRfWE",
+                          "name": "R",
+                          "width": "fill_container",
+                          "padding": [
+                            7,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "r10WpS",
+                              "name": "V",
+                              "fill": "$foreground",
+                              "content": "Ciało",
+                              "fontFamily": "$font-secondary",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "P26QM",
+                      "name": "Skóra",
+                      "width": "fill_container",
+                      "fill": "$background",
+                      "stroke": "$border",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "nvfqy",
+                          "name": "L",
+                          "width": 200,
+                          "padding": [
+                            7,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "j5XXb",
+                              "name": "K",
+                              "fill": "$muted-foreground",
+                              "content": "Skóra",
+                              "fontFamily": "$font-secondary",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "mT5HT",
+                          "name": "R",
+                          "width": "fill_container",
+                          "padding": [
+                            7,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "OMwUC",
+                              "name": "V",
+                              "fill": "$foreground",
+                              "content": "Wszystkie typy",
+                              "fontFamily": "$font-secondary",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "SR5bJ",
+                      "name": "Kraj produkcji",
+                      "width": "fill_container",
+                      "fill": "$muted",
+                      "stroke": "$border",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "h1umW8",
+                          "name": "L",
+                          "width": 200,
+                          "padding": [
+                            7,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "jGDdV",
+                              "name": "K",
+                              "fill": "$muted-foreground",
+                              "content": "Kraj produkcji",
+                              "fontFamily": "$font-secondary",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "M3m7FG",
+                          "name": "R",
+                          "width": "fill_container",
+                          "padding": [
+                            7,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "qxVqj",
+                              "name": "V",
+                              "fill": "$foreground",
+                              "content": "Polska",
+                              "fontFamily": "$font-secondary",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "lDpgq",
+                  "name": "Tags",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "OEoAy",
+                      "name": "TagIcon",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "tag",
+                      "library": "lucide",
+                      "fill": "$muted-foreground"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "CTRBa",
+                      "name": "beauty",
+                      "cornerRadius": "$radius-pill",
+                      "stroke": "$border",
+                      "strokeWidth": 1,
+                      "padding": [
+                        3,
+                        8
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "I5B16",
+                          "name": "Label",
+                          "fill": "$foreground",
+                          "content": "beauty",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "of8QX",
+                      "name": "ciało",
+                      "cornerRadius": "$radius-pill",
+                      "stroke": "$border",
+                      "strokeWidth": 1,
+                      "padding": [
+                        3,
+                        8
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "r1bGP",
+                          "name": "Label",
+                          "fill": "$foreground",
+                          "content": "ciało",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qVxvA",
+                      "name": "peeling",
+                      "cornerRadius": "$radius-pill",
+                      "stroke": "$border",
+                      "strokeWidth": 1,
+                      "padding": [
+                        3,
+                        8
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ESLbb",
+                          "name": "Label",
+                          "fill": "$foreground",
+                          "content": "peeling",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "NQp11",
+                      "name": "natural",
+                      "cornerRadius": "$radius-pill",
+                      "stroke": "$border",
+                      "strokeWidth": 1,
+                      "padding": [
+                        3,
+                        8
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "OrSXd",
+                          "name": "Label",
+                          "fill": "$foreground",
+                          "content": "natural",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "kGLrH",
+                      "name": "vegan",
+                      "cornerRadius": "$radius-pill",
+                      "stroke": "$border",
+                      "strokeWidth": 1,
+                      "padding": [
+                        3,
+                        8
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "MiGjw",
+                          "name": "Label",
+                          "fill": "$foreground",
+                          "content": "vegan",
+                          "fontFamily": "$font-secondary",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
                     }
                   ]
                 }
