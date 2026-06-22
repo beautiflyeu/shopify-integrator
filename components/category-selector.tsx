@@ -8,24 +8,23 @@ interface CategorySelectorProps {
   value: string | null;
   onChange: (v: string | null) => void;
   suggestions: string[];
-  allCategories: { id: string; fullName: string }[];
   isLoading?: boolean;
-  onOpen?: () => void;
 }
 
 export function CategorySelector({
   value,
   onChange,
   suggestions,
-  allCategories,
   isLoading,
-  onOpen,
 }: CategorySelectorProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<{ id: string; fullName: string }[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -33,6 +32,7 @@ export function CategorySelector({
         setOpen(false);
         setQuery("");
         setDebouncedQuery("");
+        setSearchResults([]);
       }
     }
     document.addEventListener("mousedown", handleClick);
@@ -42,42 +42,55 @@ export function CategorySelector({
   function handleQueryChange(val: string) {
     setQuery(val);
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => setDebouncedQuery(val), 200);
+    debounceRef.current = setTimeout(() => setDebouncedQuery(val), 300);
   }
 
-  function handleOpen() {
-    setOpen((v) => !v);
-    if (!open) onOpen?.();
-  }
+  useEffect(() => {
+    if (debouncedQuery.length < 2) {
+      setSearchResults([]);
+      return;
+    }
+
+    abortRef.current?.abort();
+    abortRef.current = new AbortController();
+    setIsSearching(true);
+
+    fetch(`/api/shopify/categories/search?q=${encodeURIComponent(debouncedQuery)}`, {
+      signal: abortRef.current.signal,
+    })
+      .then((r) => r.json())
+      .then((data: { id: string; fullName: string }[]) => {
+        setSearchResults(data);
+        setIsSearching(false);
+      })
+      .catch((err) => {
+        if (err.name !== "AbortError") setIsSearching(false);
+      });
+  }, [debouncedQuery]);
 
   const lowerQuery = debouncedQuery.toLowerCase().trim();
 
   const filteredSuggestions = useMemo(
-    () => lowerQuery ? suggestions.filter((s) => s.toLowerCase().includes(lowerQuery)) : suggestions,
+    () => (lowerQuery ? suggestions.filter((s) => s.toLowerCase().includes(lowerQuery)) : suggestions),
     [suggestions, lowerQuery]
   );
 
-  const filteredAll = useMemo(
-    () => lowerQuery
-      ? allCategories.filter((c) => c.fullName.toLowerCase().includes(lowerQuery)).slice(0, 50)
-      : [],
-    [allCategories, lowerQuery]
-  );
-
   const showSuggestions = filteredSuggestions.length > 0;
+  const showSearchResults = searchResults.length > 0 && debouncedQuery.length >= 2;
 
   function select(category: string) {
     onChange(category);
     setOpen(false);
     setQuery("");
     setDebouncedQuery("");
+    setSearchResults([]);
   }
 
   return (
     <div ref={ref} className="relative w-full">
       <button
         type="button"
-        onClick={handleOpen}
+        onClick={() => setOpen((v) => !v)}
         className={cn(
           "flex w-full items-center justify-between gap-2 rounded-md border border-border bg-background px-3 py-2 text-left text-sm transition-colors hover:bg-muted",
           open && "border-primary ring-1 ring-primary"
@@ -108,16 +121,16 @@ export function CategorySelector({
               type="text"
               value={query}
               onChange={(e) => handleQueryChange(e.target.value)}
-              placeholder="Szukaj kategorii…"
+              placeholder="Szukaj w taksonomii Shopify…"
               className="w-full rounded bg-muted px-2 py-1.5 text-sm outline-none placeholder:text-muted-foreground"
             />
           </div>
 
-          <div className="max-h-64 overflow-y-auto">
-            {isLoading && (
+          <div className="max-h-72 overflow-y-auto">
+            {isLoading && !debouncedQuery && (
               <div className="flex items-center gap-2 px-3 py-4 text-sm text-muted-foreground">
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                Ładowanie kategorii…
+                Ładowanie sugestii…
               </div>
             )}
 
@@ -138,14 +151,21 @@ export function CategorySelector({
                     {cat}
                   </button>
                 ))}
-                {filteredAll.length > 0 && <div className="mx-3 my-1 border-t border-border" />}
+                {(showSearchResults || isSearching) && <div className="mx-3 my-1 border-t border-border" />}
               </>
             )}
 
-            {!isLoading && filteredAll.length > 0 && (
+            {isSearching && (
+              <div className="flex items-center gap-2 px-3 py-4 text-sm text-muted-foreground">
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                Szukanie w taksonomii…
+              </div>
+            )}
+
+            {!isSearching && showSearchResults && (
               <>
-                <p className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Wszystkie kategorie</p>
-                {filteredAll.map((c) => (
+                {!showSuggestions && <p className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Wyniki</p>}
+                {searchResults.map((c) => (
                   <button
                     key={c.id}
                     type="button"
@@ -161,9 +181,9 @@ export function CategorySelector({
               </>
             )}
 
-            {!isLoading && !showSuggestions && filteredAll.length === 0 && (
+            {!isSearching && !showSuggestions && !showSearchResults && (
               <p className="px-3 py-4 text-center text-sm text-muted-foreground">
-                {lowerQuery ? "Brak wyników" : "Zacznij pisać aby wyszukać"}
+                {debouncedQuery.length >= 2 ? "Brak wyników" : "Zacznij pisać aby wyszukać"}
               </p>
             )}
           </div>

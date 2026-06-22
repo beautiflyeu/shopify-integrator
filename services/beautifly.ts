@@ -80,6 +80,8 @@ export interface BeautiflyListResponse {
     total_count?: number;
     page?: number;
     per_page?: number;
+    current_page?: number;
+    last_page?: number;
   };
 }
 
@@ -95,7 +97,7 @@ export async function fetchAllProducts(
   let hasMore = true;
 
   while (hasMore) {
-    const params = new URLSearchParams({ fields: "id,sku,model,name,ean", lang, page: String(page) });
+    const params = new URLSearchParams({ fields: "id,sku,model,name,ean", lang, limit: "500", page: String(page) });
     const res = await fetch(`${BASE_URL}/api/v1/products?${params}`, {
       headers: getHeaders(),
       next: { revalidate: 300 },
@@ -106,9 +108,9 @@ export async function fetchAllProducts(
     const items = Array.isArray(json) ? (json as BeautiflyProductListItem[]) : (json.data ?? []);
     all.push(...items);
 
-    const total = json.meta?.total ?? json.meta?.total_count ?? null;
-    const perPage = json.meta?.per_page ?? items.length;
-    hasMore = items.length >= perPage && (total === null || all.length < total);
+    const lastPage = json.meta?.last_page ?? 1;
+    const currentPage = json.meta?.current_page ?? page;
+    hasMore = currentPage < lastPage;
     page++;
   }
 

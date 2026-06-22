@@ -1,14 +1,10 @@
 "use client";
 
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import { useCategoryStore } from "@/stores/category";
+import { useTaxonomyStore } from "@/stores/shopify-taxonomy";
 import { suggestTopCategories, suggestCategory } from "@/lib/suggest-category";
 import { CategorySelector } from "@/components/category-selector";
-
-interface SimpleCategory {
-  id: string;
-  fullName: string;
-}
 
 interface ProductCategorySelectorProps {
   productId: string;
@@ -22,41 +18,36 @@ export function ProductCategorySelector({
   productModel,
 }: ProductCategorySelectorProps) {
   const { categoryMap, setCategory, clearCategory } = useCategoryStore();
+  const { fullNameSet, status, load } = useTaxonomyStore();
+
   const value = categoryMap[productId] ?? null;
-  const suggestions = useMemo(
+
+  const rawSuggestions = useMemo(
     () => suggestTopCategories(productName, productModel, 3),
     [productName, productModel]
   );
 
-  const [rawCategories, setRawCategories] = useState<SimpleCategory[]>([]);
-  const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
-  const fetchedRef = useRef(false);
-
-  function loadCategories() {
-    if (fetchedRef.current) return;
-    fetchedRef.current = true;
-    setStatus("loading");
-    fetch("/api/shopify/categories")
-      .then((r) => r.json())
-      .then((data: SimpleCategory[]) => {
-        setRawCategories(data);
-        setStatus("done");
-      })
-      .catch(() => setStatus("error"));
-  }
-
-  const allCategories = useMemo(
-    () => rawCategories.map((c) => ({ id: c.id, fullName: c.fullName })),
-    [rawCategories]
+  // Filter suggestions to only valid Shopify taxonomy entries.
+  const suggestions = useMemo(
+    () =>
+      status === "done"
+        ? rawSuggestions.filter((s) => fullNameSet.has(s))
+        : rawSuggestions,
+    [rawSuggestions, fullNameSet, status]
   );
 
+  // Load taxonomy once for validation (store guards against duplicate calls)
   useEffect(() => {
-    if (!categoryMap[productId]) {
-      const top = suggestCategory(productName, productModel);
-      if (top) setCategory(productId, top);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [productId]);
+    load();
+  }, [load]);
+
+  // Auto-apply top suggestion only when confirmed valid in the taxonomy
+  useEffect(() => {
+    if (categoryMap[productId]) return;
+    if (status !== "done") return;
+    const top = suggestCategory(productName, productModel);
+    if (top && fullNameSet.has(top)) setCategory(productId, top);
+  }, [productId, status, fullNameSet, categoryMap, productName, productModel, setCategory]);
 
   return (
     <div className="space-y-1.5">
@@ -65,9 +56,7 @@ export function ProductCategorySelector({
         value={value}
         onChange={(v) => (v ? setCategory(productId, v) : clearCategory(productId))}
         suggestions={suggestions}
-        allCategories={allCategories}
         isLoading={status === "loading"}
-        onOpen={loadCategories}
       />
     </div>
   );
