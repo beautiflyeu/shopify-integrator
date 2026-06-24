@@ -67,14 +67,14 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
     registerShopifyIds(map);
   }, [rows, registerShopifyIds]);
 
-  useEffect(() => {
-    for (const row of rows) {
-      const suggested = suggestCategory(row.name, row.productType);
-      if (suggested) setCategory(row.id, suggested);
-    }
-    // intentionally omit setCategory — we only want this on rows change
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows]);
+  // auto-suggest disabled — categories must be set manually
+  // useEffect(() => {
+  //   for (const row of rows) {
+  //     const suggested = suggestCategory(row.name, row.productType);
+  //     if (suggested) setCategory(row.id, suggested);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [rows]);
 
   const families = useMemo(() => {
     const map = new Map<string, number>();

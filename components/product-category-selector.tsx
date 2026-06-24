@@ -56,7 +56,6 @@ export function ProductCategorySelector({
         value={value}
         onChange={(v) => (v ? setCategory(productId, v) : clearCategory(productId))}
         suggestions={suggestions}
-        isLoading={status === "loading"}
       />
     </div>
   );

@@ -9,10 +9,9 @@ interface CategoryDiffRowProps {
   productId: string;
   productName: string;
   productModel?: string | null;
-  allCategories: { id: string; fullName: string }[];
 }
 
-export function CategoryDiffRow({ productId, productName, productModel, allCategories }: CategoryDiffRowProps) {
+export function CategoryDiffRow({ productId, productName, productModel }: CategoryDiffRowProps) {
   const { categoryMap, setCategory, clearCategory } = useCategoryStore();
   const value = categoryMap[productId] ?? null;
   const suggestions = suggestTopCategories(productName, productModel, 3);
@@ -38,7 +37,6 @@ export function CategoryDiffRow({ productId, productName, productModel, allCateg
           value={value}
           onChange={(v) => (v ? setCategory(productId, v) : clearCategory(productId))}
           suggestions={suggestions}
-          allCategories={allCategories}
         />
       </td>
       <td className="px-4 py-2 text-muted-foreground">—</td>

@@ -3,28 +3,27 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { ChevronDown, X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTaxonomyStore } from "@/stores/shopify-taxonomy";
 
 interface CategorySelectorProps {
   value: string | null;
   onChange: (v: string | null) => void;
   suggestions: string[];
-  isLoading?: boolean;
 }
 
 export function CategorySelector({
   value,
   onChange,
   suggestions,
-  isLoading,
 }: CategorySelectorProps) {
+  const { categories, status: taxonomyStatus, load } = useTaxonomyStore();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<{ id: string; fullName: string }[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const abortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => { load(); }, [load]);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -32,7 +31,6 @@ export function CategorySelector({
         setOpen(false);
         setQuery("");
         setDebouncedQuery("");
-        setSearchResults([]);
       }
     }
     document.addEventListener("mousedown", handleClick);
@@ -45,28 +43,29 @@ export function CategorySelector({
     debounceRef.current = setTimeout(() => setDebouncedQuery(val), 300);
   }
 
-  useEffect(() => {
-    if (debouncedQuery.length < 2) {
-      setSearchResults([]);
-      return;
-    }
+  const searchResults = useMemo(() => {
+    if (debouncedQuery.length < 2) return [];
+    const lower = debouncedQuery.toLowerCase().trim();
+    const ALIASES: Record<string, string> = {
+      masażer: "massager", masazer: "massager",
+      prostownica: "straightener", lokówka: "curling", lokuwka: "curling",
+      paznokcie: "nail", paznokciem: "nail",
+      pielęgnacja: "skin care", pielegnacja: "skin care",
+      włosy: "hair", wlosy: "hair",
+      twarz: "facial",
+      led: "light therapy",
+      peeling: "exfoliat",
+      suszarka: "hair dryer",
+      akcesoria: "accessories",
+      kosmetyki: "cosmetic",
+      masaż: "massage", masaz: "massage",
+      elektrostymulacja: "electric", ems: "electric massager",
+    };
+    const effectiveQuery = ALIASES[lower] ?? lower;
+    return categories.filter((c) => c.fullName.toLowerCase().includes(effectiveQuery)).slice(0, 50);
+  }, [debouncedQuery, categories]);
 
-    abortRef.current?.abort();
-    abortRef.current = new AbortController();
-    setIsSearching(true);
-
-    fetch(`/api/shopify/categories/search?q=${encodeURIComponent(debouncedQuery)}`, {
-      signal: abortRef.current.signal,
-    })
-      .then((r) => r.json())
-      .then((data: { id: string; fullName: string }[]) => {
-        setSearchResults(data);
-        setIsSearching(false);
-      })
-      .catch((err) => {
-        if (err.name !== "AbortError") setIsSearching(false);
-      });
-  }, [debouncedQuery]);
+  const isSearching = taxonomyStatus === "loading" && debouncedQuery.length >= 2;
 
   const lowerQuery = debouncedQuery.toLowerCase().trim();
 
@@ -83,7 +82,6 @@ export function CategorySelector({
     setOpen(false);
     setQuery("");
     setDebouncedQuery("");
-    setSearchResults([]);
   }
 
   return (
@@ -127,14 +125,14 @@ export function CategorySelector({
           </div>
 
           <div className="max-h-72 overflow-y-auto">
-            {isLoading && !debouncedQuery && (
+            {taxonomyStatus === "loading" && !debouncedQuery && (
               <div className="flex items-center gap-2 px-3 py-4 text-sm text-muted-foreground">
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                Ładowanie sugestii…
+                Ładowanie taksonomii…
               </div>
             )}
 
-            {!isLoading && showSuggestions && (
+            {showSuggestions && (
               <>
                 <p className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Sugestie</p>
                 {filteredSuggestions.map((cat) => (

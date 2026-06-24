@@ -36,7 +36,7 @@ export async function POST(request: Request) {
 
   const fieldSet = fieldKeys && fieldKeys.length > 0 ? new Set(fieldKeys) : undefined;
 
-  const csv = buildCsvPayload(products, fieldSet, categoryMap);
+  const csv = "﻿" + buildCsvPayload(products, fieldSet, categoryMap);
 
   const now = new Date();
   const date = now.toISOString().slice(0, 10);
