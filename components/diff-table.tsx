@@ -25,6 +25,7 @@ import {
 import { useSelectionStore } from "@/stores/selection";
 import { useCategoryStore } from "@/stores/category";
 import { suggestCategory } from "@/lib/suggest-category";
+import { CategoryRulesPanel } from "@/components/category-rules-panel";
 import type { ProductStatus } from "@/types/product";
 
 export interface DiffTableRow {
@@ -307,6 +308,8 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
           </tbody>
         </table>
       </div>
+
+      <CategoryRulesPanel />
     </div>
   );
 }

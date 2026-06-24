@@ -70,7 +70,7 @@ export default async function ProductDetailPage({ params }: Props) {
             </TabsContent>
 
             <TabsContent value="shopify">
-              <div className="mb-4 max-w-lg">
+              <div className="mb-4 w-full min-[1400px]:w-1/2">
                 <ProductCategorySelector
                   productId={id}
                   productName={normalized.name}

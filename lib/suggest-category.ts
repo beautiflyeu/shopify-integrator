@@ -1,35 +1,43 @@
-import { CATEGORY_RULES } from "@/config/category-rules";
+import { CATEGORY_RULES, type CategoryRule } from "@/config/category-rules";
 
-export function suggestCategory(name: string, model?: string | null): string | null {
+export function suggestCategory(
+  name: string,
+  model?: string | null,
+  rules: CategoryRule[] = CATEGORY_RULES
+): string | null {
   const text = `${name} ${model ?? ""}`.toLowerCase();
+  let best: { english: string; score: number } | null = null;
 
-  let best: { category: string; score: number } | null = null;
-
-  for (const rule of CATEGORY_RULES) {
+  for (const rule of rules) {
     const score = rule.keywords.filter((kw) => text.includes(kw)).length;
     if (score > 0 && (!best || score > best.score)) {
-      best = { category: rule.category, score };
+      best = { english: rule.englishFullName, score };
     }
   }
 
-  return best?.category ?? null;
+  return best?.english ?? null;
 }
 
-export function suggestTopCategories(name: string, model?: string | null, limit = 3): string[] {
+export function suggestTopCategories(
+  name: string,
+  model?: string | null,
+  limit = 3,
+  rules: CategoryRule[] = CATEGORY_RULES
+): string[] {
   const text = `${name} ${model ?? ""}`.toLowerCase();
   const seen = new Set<string>();
 
-  return CATEGORY_RULES
+  return rules
     .map((rule) => ({
-      category: rule.category,
+      english: rule.englishFullName,
       score: rule.keywords.filter((kw) => text.includes(kw)).length,
     }))
-    .filter(({ score, category }) => {
-      if (score === 0 || seen.has(category)) return false;
-      seen.add(category);
+    .filter(({ score, english }) => {
+      if (score === 0 || seen.has(english)) return false;
+      seen.add(english);
       return true;
     })
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
-    .map(({ category }) => category);
+    .map(({ english }) => english);
 }

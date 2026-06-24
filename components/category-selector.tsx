@@ -8,13 +8,11 @@ import { useTaxonomyStore } from "@/stores/shopify-taxonomy";
 interface CategorySelectorProps {
   value: string | null;
   onChange: (v: string | null) => void;
-  suggestions: string[];
 }
 
 export function CategorySelector({
   value,
   onChange,
-  suggestions,
 }: CategorySelectorProps) {
   const { categories, status: taxonomyStatus, load } = useTaxonomyStore();
   const [open, setOpen] = useState(false);
@@ -67,14 +65,6 @@ export function CategorySelector({
 
   const isSearching = taxonomyStatus === "loading" && debouncedQuery.length >= 2;
 
-  const lowerQuery = debouncedQuery.toLowerCase().trim();
-
-  const filteredSuggestions = useMemo(
-    () => (lowerQuery ? suggestions.filter((s) => s.toLowerCase().includes(lowerQuery)) : suggestions),
-    [suggestions, lowerQuery]
-  );
-
-  const showSuggestions = filteredSuggestions.length > 0;
   const showSearchResults = searchResults.length > 0 && debouncedQuery.length >= 2;
 
   function select(category: string) {
@@ -94,8 +84,15 @@ export function CategorySelector({
           open && "border-primary ring-1 ring-primary"
         )}
       >
-        <span className={cn("flex-1 truncate", !value && "text-muted-foreground")}>
-          {value ?? "Wybierz kategorię Shopify…"}
+        <span className="flex-1 min-w-0">
+          <span className={cn("block truncate text-sm font-medium", !value && "text-muted-foreground")}>
+            {value ? value.split(" > ").at(-1) : "Wybierz kategorię Shopify…"}
+          </span>
+          {value && (
+            <span className="block truncate text-xs text-muted-foreground leading-tight">
+              {value}
+            </span>
+          )}
         </span>
         <span className="flex items-center gap-1 shrink-0">
           {value && (
@@ -132,27 +129,6 @@ export function CategorySelector({
               </div>
             )}
 
-            {showSuggestions && (
-              <>
-                <p className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Sugestie</p>
-                {filteredSuggestions.map((cat) => (
-                  <button
-                    key={cat}
-                    type="button"
-                    onClick={() => select(cat)}
-                    className={cn(
-                      "flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-muted",
-                      value === cat && "bg-primary/10 font-medium text-primary"
-                    )}
-                  >
-                    <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-green-500" />
-                    {cat}
-                  </button>
-                ))}
-                {(showSearchResults || isSearching) && <div className="mx-3 my-1 border-t border-border" />}
-              </>
-            )}
-
             {isSearching && (
               <div className="flex items-center gap-2 px-3 py-4 text-sm text-muted-foreground">
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -162,7 +138,7 @@ export function CategorySelector({
 
             {!isSearching && showSearchResults && (
               <>
-                {!showSuggestions && <p className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Wyniki</p>}
+                <p className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Wyniki</p>
                 {searchResults.map((c) => (
                   <button
                     key={c.id}
@@ -179,7 +155,7 @@ export function CategorySelector({
               </>
             )}
 
-            {!isSearching && !showSuggestions && !showSearchResults && (
+            {!isSearching && !showSearchResults && (
               <p className="px-3 py-4 text-center text-sm text-muted-foreground">
                 {debouncedQuery.length >= 2 ? "Brak wyników" : "Zacznij pisać aby wyszukać"}
               </p>

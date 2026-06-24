@@ -1,43 +1,47 @@
 export interface CategoryRule {
   keywords: string[];
-  category: string;
+  englishFullName: string;
 }
 
 export const CATEGORY_RULES: CategoryRule[] = [
   {
     keywords: ["led", "fototerapia", "fototerapii", "światłem", "beautilight", "skinglow", "skinclear"],
-    category: "Zdrowie i uroda > Higiena osobista > Kosmetyki > Akcesoria kosmetyczne > Akcesoria do pielęgnacji twarzy > Urządzenia do terapii światłem LED",
+    englishFullName: "Health & Beauty > Personal Care > Cosmetics > Cosmetic Tools > Skin Care Tools > LED Light Therapy Devices",
   },
   {
-    keywords: ["hydrodermabrazja", "hydro", "hydraclear", "dermabrazja", "peeling"],
-    category: "Zdrowie i uroda > Higiena osobista > Kosmetyki > Akcesoria kosmetyczne > Akcesoria do pielęgnacji twarzy",
+    keywords: ["hydrodermabrazja", "hydro", "hydraclear", "dermabrazja", "kawitacyjny", "cavitation", "ultrasonic"],
+    englishFullName: "Health & Beauty > Personal Care > Cosmetics > Cosmetic Tools > Skin Care Tools",
   },
   {
     keywords: ["darsonval", "d'arsonval", "ionsteam", "steam", "parowy"],
-    category: "Zdrowie i uroda > Higiena osobista > Kosmetyki > Akcesoria kosmetyczne > Akcesoria do pielęgnacji twarzy",
+    englishFullName: "Health & Beauty > Personal Care > Cosmetics > Cosmetic Tools > Skin Care Tools",
   },
   {
     keywords: ["masażer", "masaż", "massage", "lipomassage", "antycellulitowy", "cellulite"],
-    category: "Zdrowie i uroda > Higiena osobista > Masaż i relaks > Masażery",
+    englishFullName: "Health & Beauty > Personal Care > Massage & Relaxation > Massagers",
   },
   {
-    keywords: ["ems", "femmeform", "elektrostymulacja"],
-    category: "Zdrowie i uroda > Higiena osobista > Masaż i relaks > Masażery > Masażery elektryczne",
+    keywords: ["ems", "femmeform", "elektrostymulacja", "microcurrent", "rf", "radiofrequency"],
+    englishFullName: "Health & Beauty > Personal Care > Cosmetics > Cosmetic Tools > Skin Care Tools > Microcurrent & EMS Facial Devices",
   },
   {
     keywords: ["prostownica", "aeroprostownica", "dualperfection", "straightener"],
-    category: "Zdrowie i uroda > Higiena osobista > Pielęgnacja włosów > Narzędzia do stylizacji włosów > Prostownice do włosów",
+    englishFullName: "Health & Beauty > Personal Care > Hair Care > Hair Styling Tools > Hair Straighteners",
+  },
+  {
+    keywords: ["suszarka", "suszarki", "ionboost", "dryer"],
+    englishFullName: "Health & Beauty > Personal Care > Hair Care > Hair Styling Tools > Hair Dryers",
   },
   {
     keywords: ["klamra", "opaska", "spinka", "spinki"],
-    category: "Ubrania i akcesoria > Akcesoria do ubrań > Akcesoria do włosów > Szpilki, klamry i spinki do włosów",
+    englishFullName: "Apparel & Accessories > Clothing Accessories > Hair Accessories > Hair Pins, Claws & Clips",
   },
   {
     keywords: ["manicure", "paznokcie", "nail"],
-    category: "Zdrowie i uroda > Higiena osobista > Kosmetyki > Pielęgnacja paznokci",
+    englishFullName: "Health & Beauty > Personal Care > Cosmetics > Nail Care",
   },
   {
     keywords: ["mist", "skinmist", "nawilżanie", "mgiełka"],
-    category: "Zdrowie i uroda > Higiena osobista > Kosmetyki > Pielęgnacja skóry",
+    englishFullName: "Health & Beauty > Personal Care > Cosmetics > Skin Care",
   },
 ];

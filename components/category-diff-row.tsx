@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
 import { useCategoryStore } from "@/stores/category";
-import { suggestTopCategories, suggestCategory } from "@/lib/suggest-category";
 import { CategorySelector } from "@/components/category-selector";
+import { CategoryRuleBadges } from "@/components/category-rule-badges";
 
 interface CategoryDiffRowProps {
   productId: string;
@@ -13,16 +12,8 @@ interface CategoryDiffRowProps {
 
 export function CategoryDiffRow({ productId, productName, productModel }: CategoryDiffRowProps) {
   const { categoryMap, setCategory, clearCategory } = useCategoryStore();
-  const value = categoryMap[productId] ?? null;
-  const suggestions = suggestTopCategories(productName, productModel, 3);
 
-  useEffect(() => {
-    if (!categoryMap[productId]) {
-      const top = suggestCategory(productName, productModel);
-      if (top) setCategory(productId, top);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [productId]);
+  const value = categoryMap[productId] ?? null;
 
   return (
     <tr className="border-b border-border bg-blue-50/40 text-sm">
@@ -32,12 +23,12 @@ export function CategoryDiffRow({ productId, productName, productModel }: Catego
           Shopify
         </span>
       </td>
-      <td className="px-4 py-2 min-w-[260px]">
+      <td className="px-4 py-2 min-w-[500px]">
         <CategorySelector
           value={value}
           onChange={(v) => (v ? setCategory(productId, v) : clearCategory(productId))}
-          suggestions={suggestions}
         />
+        <CategoryRuleBadges onSelect={(v) => setCategory(productId, v)} selectedEnglish={value} />
       </td>
       <td className="px-4 py-2 text-muted-foreground">—</td>
       <td className="px-4 py-2">

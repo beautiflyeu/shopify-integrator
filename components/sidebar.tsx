@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ListChecks, ScrollText, Settings } from "lucide-react";
+import { LayoutDashboard, ListChecks, ScrollText, Settings, Tag } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/sync-queue", label: "Sync Queue", icon: ListChecks },
   { href: "/logs", label: "Logs", icon: ScrollText },
+  { href: "/rules", label: "Reguły kategorii", icon: Tag },
   { href: "/settings", label: "Ustawienia", icon: Settings },
 ];
 
