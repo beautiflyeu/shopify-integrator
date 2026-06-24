@@ -4,10 +4,11 @@ import { useState } from "react";
 import { Plus, RotateCcw, Trash2, Pencil } from "lucide-react";
 import { useCategoryRulesStore } from "@/stores/category-rules";
 import { RuleEditor } from "@/components/rule-editor";
+import { Switch } from "@/components/ui/switch";
 import type { CategoryRule } from "@/config/category-rules";
 
 export default function RulesPage() {
-  const { rules, addRule, updateRule, deleteRule, resetToDefaults } = useCategoryRulesStore();
+  const { rules, autoSuggest, addRule, updateRule, deleteRule, resetToDefaults, setAutoSuggest } = useCategoryRulesStore();
   const [adding, setAdding] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
@@ -23,6 +24,16 @@ export default function RulesPage() {
 
   return (
     <div className="p-6 max-w-3xl space-y-4">
+      <div className="rounded-lg border border-border bg-muted/30 px-4 py-3 flex items-center justify-between gap-4">
+        <div>
+          <p className="text-sm font-medium">Auto-sugestia kategorii</p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Automatycznie proponuje kategorię przy wejściu w produkt (jeśli żadna nie jest przypisana)
+          </p>
+        </div>
+        <Switch checked={autoSuggest} onCheckedChange={setAutoSuggest} />
+      </div>
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-lg font-semibold">Reguły kategorii</h1>
