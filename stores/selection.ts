@@ -9,10 +9,13 @@ interface SelectionState {
   selectedProductIds: Set<string>;
   // Level 3: per-product field overrides — true = include, false = skip
   fieldSelections: Map<string, Map<FieldKey, boolean>>;
+  // Shopify GID lookup: pimId → shopifyId | null
+  shopifyIdMap: Map<string, string | null>;
 
   setAllSelected: (v: boolean) => void;
   selectProducts: (ids: string[]) => void;
   deselectProducts: (ids: string[]) => void;
+  registerShopifyIds: (map: Record<string, string | null>) => void;
   toggleProduct: (id: string) => void;
   setProductSelected: (id: string, selected: boolean) => void;
   toggleField: (productId: string, field: FieldKey) => void;
@@ -31,6 +34,7 @@ export const useSelectionStore = create<SelectionState>((set, get) => ({
   allSelected: false,
   selectedProductIds: new Set(),
   fieldSelections: new Map(),
+  shopifyIdMap: new Map(),
 
   setAllSelected: (v) =>
     set((s) => ({
@@ -50,6 +54,11 @@ export const useSelectionStore = create<SelectionState>((set, get) => ({
       ids.forEach((id) => next.delete(id));
       return { selectedProductIds: next, allSelected: false };
     }),
+
+  registerShopifyIds: (map) =>
+    set((s) => ({
+      shopifyIdMap: new Map([...s.shopifyIdMap, ...Object.entries(map)]),
+    })),
 
   toggleProduct: (id) =>
     set((s) => {
@@ -105,7 +114,7 @@ export const useSelectionStore = create<SelectionState>((set, get) => ({
       return { fieldSelections: map };
     }),
 
-  reset: () => set({ allSelected: false, selectedProductIds: new Set(), fieldSelections: new Map() }),
+  reset: () => set({ allSelected: false, selectedProductIds: new Set(), fieldSelections: new Map(), shopifyIdMap: new Map() }),
 
   isProductSelected: (id) => get().allSelected || get().selectedProductIds.has(id),
 

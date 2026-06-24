@@ -38,6 +38,7 @@ export function normalizeShopifyProduct(raw: ShopifyProduct): NormalizedProduct 
     compareAtPrice: firstVariant?.compareAtPrice ? Number(firstVariant.compareAtPrice) : null,
     images,
     categories: [],
+    families: [],
     tags: raw.tags,
     variants,
     attributes: {},

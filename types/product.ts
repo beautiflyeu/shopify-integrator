@@ -13,6 +13,7 @@ export interface NormalizedProduct {
   compareAtPrice: number | null;
   images: Array<{ url: string; alt: string | null; position: number }>;
   categories: string[];
+  families: string[];
   tags: string[];
   variants: NormalizedVariant[];
   attributes: Record<string, string>;

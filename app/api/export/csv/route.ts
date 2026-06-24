@@ -35,10 +35,13 @@ export async function POST(request: Request) {
   }
 
   const fieldSet = fieldKeys && fieldKeys.length > 0 ? new Set(fieldKeys) : undefined;
+
   const csv = buildCsvPayload(products, fieldSet, categoryMap);
 
-  const date = new Date().toISOString().slice(0, 10);
-  const filename = `shopify-export-${date}.csv`;
+  const now = new Date();
+  const date = now.toISOString().slice(0, 10);
+  const time = now.toTimeString().slice(0, 8).replace(/:/g, "");
+  const filename = `shopify-export-${date}_${time}.csv`;
 
   return new Response(csv, {
     headers: {

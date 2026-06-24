@@ -54,6 +54,7 @@ export function normalizeProduct(raw: BeautiflyProduct): NormalizedProduct {
     compareAtPrice: price.pln?.net != null ? Number(price.pln.net) : null,
     images,
     categories,
+    families,
     tags: [...categories, ...families],
     variants: [],
     attributes,

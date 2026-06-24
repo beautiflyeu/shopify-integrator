@@ -1,66 +1,81 @@
-# STATUS - Shopify Integrator — Filtracja rodzin + UI Shopify
+# STATUS - Shopify Integrator — Naprawa kategorii + weryfikacja kolekcji
 
-*Ostatnia aktualizacja: 2026-06-22 19:45*
+*Ostatnia aktualizacja: 2026-06-24 15:30*
 
 ## Co robimy
 
-Budujemy lokalne narzędzie do synchronizacji produktów między Beautifly PIM API a Shopify. Aktualnie przebudowaliśmy UI dashboardu — dodano filtrację po rodzinach PIM i zmieniono domyślny widok produktu na zakładkę Shopify.
+Budujemy lokalne narzędzie do synchronizacji produktów między Beautifly PIM API a Shopify. W tej sesji naprawiliśmy problem z kategorią produktu (Shopify taxonomy) w eksporcie CSV oraz zweryfikowaliśmy dopasowanie kolekcji PIM → Shopify.
 
 ## Co zostało zrobione
 
-### W tej sesji (2026-06-22)
+### W tej sesji (2026-06-24)
 
-- **Shopify MCP** — potwierdzono do                                    stęp do sklepu BeautiflyGlobal.eu
-- **Skanowanie PIM** — 226 produktów, 29 rodzin, `categories` = PUSTE (nie używać)
-- **Odkrycie kodów** — 9 prefiksów (HA, DH, DE, NA, ME, EY, BE, FO, HAA) = akcesoria — każdy mapuje się na 1 rodzinę
-- **Utworzono 29 kolekcji Shopify** (przez MCP) zgodnych 1:1 z rodzinami PIM
-- **Usunięto wszystkie produkty** z Shopify (czysty start) — 0 produktów, 29 kolekcji
-- **`docs/products-collections-map.md`** — tabela wszystkich 226 produktów PIM z rodzinami i statusem sync (⬜/✅)
-- **UI przebudowa — 4 pliki zmienione:**
-  - `services/beautifly.ts` — `BeautiflyProductListItem` ma `families?: Array<{id,name}>`, `fetchAllProducts` dodaje `include=families`
-  - `components/diff-table.tsx` — `DiffTableRow` ma `family?: string | null`, scrollowalne pill-bary rodzin nad tabelą, logika filtrowania
-  - `app/dashboard/page.tsx` — każdy wiersz ma `family: item.families?.[0]?.name ?? null`
-  - `app/dashboard/[id]/page.tsx` — `<Tabs defaultValue="shopify">` (domyślna zakładka Shopify)
+**Bugfix — "nieprawidłowa kategoria" przy imporcie CSV:**
+- `app/api/export/csv/route.ts` — dodano walidację `categoryMap` przez `fetchShopifyCategories()` przed budowaniem CSV; wartości nieistniejące w taksonomii Shopify są filtrowane (zamiast powodować błąd importu)
+- `config/category-rules.ts` — **wszystkie category strings zamienione z angielskich na dokładne polskie `fullName` z Shopify Taxonomy API** (np. `"Health & Beauty > ..."` → `"Zdrowie i uroda > Higiena osobista > Kosmetyki > ..."`)
+
+**Weryfikacja kolekcji PIM vs Shopify:**
+- Pobrano families z PIM API: 29 unikalnych nazw
+- Porównano z 29 kolekcjami w Shopify — **100% dopasowanie, identyczne nazwy**
+- Sync API (`app/api/sync/products/route.ts`) poprawnie reużywa istniejące kolekcje przez `fetchCollectionByTitle()` — nie tworzy duplikatów
 
 ### Z poprzednich sesji
 
-- `services/beautifly.ts` — `fetchAllProducts` z `limit=500`, paginacja przez `meta.last_page`
-- `config/category-rules.ts` — 9 ścieżek kategorii Shopify taxonomy
-- Dashboard + detail view, 3-poziomowa selekcja, diff engine, CSV export (64 kolumny)
-- Shopify connector (GraphQL, retry 429, cursor pagination)
+- Bugfix: "zaznacz wszystkie" nie trafiało do eksportu CSV
+- Bugfix: kolumna "Product category" pusta w CSV (auto-uzupełnianie przez useEffect)
+- Przycisk "Synchronizuj zaznaczone" — pełna implementacja
+- `app/api/sync/products/route.ts` — endpoint sync z obsługą kolekcji i kategorii taksonomii
+- `modules/sync/buildShopifyInput.ts` — buduje ProductInput dla GraphQL
+- 29 kolekcji Shopify gotowych (manual, 0 produktów — czekają na sync)
 
 ## Gdzie jesteśmy
 
-Wszystkie zmiany UI są wprowadzone. Aplikacja powinna pokazywać pill-bary 29 rodzin na górze dashboardu i otwierać produkty na zakładce Shopify. Dev server nie był uruchamiany do weryfikacji.
+Naprawy gotowe, TypeScript clean (poza pre-existing błędem w `category-diff-row.tsx`). Gotowi do testowania end-to-end — CSV export Omnilight Pro powinien przejść bez błędu kategorii, sync API powinien ustawić kategorię taksonomii i kolekcję.
 
 ## Co pozostało
 
-- [ ] **Uruchomić `npm run dev`** i zweryfikować: pill-bary rodzin działają, klik produktu = zakładka Shopify, CSV export działa
-- [ ] **Naprawić pre-existing błąd TS** — `components/category-diff-row.tsx:41` — `Property 'allCategories' does not exist on type CategorySelectorProps` (nie blokuje dev server, ale blokuje `tsc --noEmit`)
-- [ ] **Import produktów do Shopify** — przez CSV export z aplikacji (zaznacz produkty rodziny → exportuj → importuj w Shopify)
-- [ ] **Aktualizacja `docs/products-collections-map.md`** — zmieniaj ⬜ → ✅ + Shopify ID po każdym imporcie
-- [ ] **Matchowanie PIM ↔ Shopify po EAN** — do wdrożenia gdy Shopify będzie miał produkty
-- [ ] **Push to Shopify API** — `modules/sync/executeSync.ts` z mutacjami `productUpdate`, `variantUpdate`, `metafieldsSet`
+- [ ] **Przetestować CSV export Omnilight Pro** (id: 183) — sprawdzić czy "Product category" pojawia się po polsku i import do Shopify przechodzi bez błędu
+- [ ] **Przetestować sync API** na Omnilight Pro — sprawdzić w Shopify Admin: produkt, kategoria taksonomii, kolekcja LIGHT THERAPY
+- [ ] Naprawić pre-existing błąd TS — `components/category-diff-row.tsx:41` — `Property 'allCategories' does not exist on type CategorySelectorProps`
+- [ ] Rozważyć zwiększenie limitu sync z 10 do więcej / progress bar
 
 ## Ważne decyzje/ustalenia
 
-- **PIM `families`** = źródło prawdy dla kolekcji Shopify (29 rodzin). `categories` w API jest PUSTE — nie używać
-- **Preferowany import**: CSV export z aplikacji lokalnej (więcej danych, 64 kolumny) — NIE MCP direct
-- **Matchowanie PIM ↔ Shopify po EAN** (nie SKU — null w Shopify)
-- **3 produkty bez rodziny**: SkinMist PRO (id:221), D'Arsonval Pro (id:222), IonSteam Balance (id:220)
+**Kategorie taksonomii — aktualne wartości w `category-rules.ts`:**
+| Typ produktu | Polska kategoria Shopify |
+|---|---|
+| LED/light therapy | `Zdrowie i uroda > Higiena osobista > Kosmetyki > Akcesoria kosmetyczne > Akcesoria do pielęgnacji twarzy > Urządzenia do terapii światłem LED` |
+| Hydrodermabrazja/peeling/darsonval/ion | `Zdrowie i uroda > Higiena osobista > Kosmetyki > Akcesoria kosmetyczne > Akcesoria do pielęgnacji twarzy` |
+| Masażer/cellulite | `Zdrowie i uroda > Higiena osobista > Masaż i relaks > Masażery` |
+| EMS/elektrostymulacja | `Zdrowie i uroda > Higiena osobista > Masaż i relaks > Masażery > Masażery elektryczne` |
+| Prostownica | `Zdrowie i uroda > Higiena osobista > Pielęgnacja włosów > Narzędzia do stylizacji włosów > Prostownice do włosów` |
+| Spinki/klamry/włosy | `Ubrania i akcesoria > Akcesoria do ubrań > Akcesoria do włosów > Szpilki, klamry i spinki do włosów` |
+| Paznokcie | `Zdrowie i uroda > Higiena osobista > Kosmetyki > Pielęgnacja paznokci` |
+| Mist/spray | `Zdrowie i uroda > Higiena osobista > Kosmetyki > Pielęgnacja skóry` |
+
+**CSV vs Sync — różnice:**
+| | Kategoria taksonomii | Kolekcja |
+|---|---|---|
+| CSV import | ✓ (fullName string) | ✗ niemożliwe w formacie CSV |
+| Sync API | ✓ (przez GID) | ✓ (families z PIM → kolekcja Shopify) |
+
+**Omnilight Pro (id: 183):**
+- Family: `LIGHT THERAPY` → kolekcja "LIGHT THERAPY" w Shopify
+- CSV Type: `"Panel do terapii światłem LED Beautifly OmniLight Pro"` (brak `main_details.title` w PIM — fallback na `name`)
+- SKU: null w PIM — uwaga przy sync
 - `SHOP_DOMAIN=beautifly-pl.myshopify.com`
-- **`docs/products-collections-map.md`** = jedyne miejsce śledzenia statusu importu produktów
-- **Sklep Shopify** = 0 produktów, 29 pustych kolekcji gotowych na import
+
+**Manual collections rekomendowane** (nie smart collections) — 29 kolekcji już istnieje, sync API je reużywa, PIM families = źródło prawdy
 
 ## Problemy/blokery
 
-- Pre-existing błąd TS w `components/category-diff-row.tsx:41` — `allCategories` prop nie istnieje w `CategorySelectorProps`. Nie blokuje dev server, ale blokuje `npx tsc --noEmit`. Wymaga naprawy.
-- Obrazy z Google Drive (`lh3.googleusercontent.com`) nie są publicznie dostępne — Shopify odrzuca te URL-e cicho (featuredImageUrl: null). Produkty będą bez obrazów przez CSV import.
+- Pre-existing błąd TS w `components/category-diff-row.tsx:41` — nie blokuje dev server, blokuje `npx tsc --noEmit`
+- Obrazy z Google Drive (`lh3.googleusercontent.com`) mogą być odrzucane przez Shopify przy sync API
+- Omnilight Pro (id: 183) nie ma SKU w PIM — może wymagać uwagi przy sync
 
 ## Następne kroki
 
-1. Uruchomić `npm run dev` → sprawdzić pill-bary rodzin + domyślna zakładka Shopify
-2. Naprawić błąd TS w `category-diff-row.tsx`
-3. Zaznaczyć produkty wybranej rodziny (np. LIGHT THERAPY) → wyeksportować CSV → zaimportować w Shopify admin
-4. Po imporcie zaktualizować `docs/products-collections-map.md` (⬜ → ✅ + Shopify ID)
-5. Użyć MCP do weryfikacji: które produkty z rodziny trafiły do kolekcji Shopify
+1. `npm run dev` → wyeksportuj Omnilight Pro do CSV → zaimportuj do Shopify → brak błędu kategorii
+2. Sync API: zaznacz Omnilight Pro → "Synchronizuj zaznaczone" → sprawdź w Shopify Admin (produkt + kolekcja LIGHT THERAPY + kategoria taksonomii)
+3. Po potwierdzeniu działania — zsynchronizuj całą rodzinę LIGHT THERAPY (13 produktów)
+4. Napraw błąd TS w `category-diff-row.tsx`

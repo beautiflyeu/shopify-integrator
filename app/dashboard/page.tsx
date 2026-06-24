@@ -38,7 +38,7 @@ export default async function DashboardPage() {
         shopifyBySku.get(item.sku) ??
         null;
       const diff = diffProduct(
-        { ...normalized, description: null, seoTitle: null, seoDescription: null, price: null, compareAtPrice: null, images: [], categories: [], tags: [], variants: [], attributes: {}, parameters: {}, metafields: {}, updatedAt: null },
+        { ...normalized, description: null, seoTitle: null, seoDescription: null, price: null, compareAtPrice: null, images: [], categories: [], families: [], tags: [], variants: [], attributes: {}, parameters: {}, metafields: {}, updatedAt: null },
         shopifyNorm
       );
       return {

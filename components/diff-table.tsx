@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import {
   createColumnHelper,
   flexRender,
@@ -23,6 +23,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useSelectionStore } from "@/stores/selection";
+import { useCategoryStore } from "@/stores/category";
+import { suggestCategory } from "@/lib/suggest-category";
 import type { ProductStatus } from "@/types/product";
 
 export interface DiffTableRow {
@@ -40,11 +42,39 @@ export interface DiffTableRow {
 const col = createColumnHelper<DiffTableRow>();
 
 function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
-  const { isProductSelected, toggleProduct, selectProducts, deselectProducts, selectedProductIds } = useSelectionStore();
+  const { isProductSelected, toggleProduct, selectProducts, deselectProducts, selectedProductIds, registerShopifyIds } = useSelectionStore();
+  const setCategory = useCategoryStore((s) => s.setCategory);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<ProductStatus | "all">("all");
   const [familyFilter, setFamilyFilter] = useState<string | "all">("all");
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        searchRef.current?.focus();
+      }
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, []);
+
+  useEffect(() => {
+    const map: Record<string, string | null> = {};
+    for (const row of rows) map[row.id] = row.shopifyId ?? null;
+    registerShopifyIds(map);
+  }, [rows, registerShopifyIds]);
+
+  useEffect(() => {
+    for (const row of rows) {
+      const suggested = suggestCategory(row.name, row.productType);
+      if (suggested) setCategory(row.id, suggested);
+    }
+    // intentionally omit setCategory — we only want this on rows change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows]);
 
   const families = useMemo(() => {
     const map = new Map<string, number>();
@@ -187,9 +217,10 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-3">
         <SearchInput
+          ref={searchRef}
           value={query}
           onChange={setQuery}
-          placeholder="Szukaj po nazwie, modelu lub EAN..."
+          placeholder="Szukaj..."
           className="w-72"
         />
         <Select value={familyFilter} onValueChange={(v: string) => setFamilyFilter(v)}>

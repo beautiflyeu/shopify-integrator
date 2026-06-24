@@ -23,6 +23,7 @@ const bandTShirt: NormalizedProduct = {
     },
   ],
   categories: [],
+  families: [],
   tags: ["Unisex", "Clothing", "Men", "Women", "Casual", "Vintage"],
   variants: [],
   attributes: {},
