@@ -1,1 +1,0 @@
-1. czy obecnie kategoria jest wstawiana w PL do csv czy w En ma byc w en tak lepiej zacyztuje shopify 
