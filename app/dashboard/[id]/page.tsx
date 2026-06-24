@@ -59,7 +59,7 @@ export default async function ProductDetailPage({ params }: Props) {
             </p>
           )}
 
-          <Tabs defaultValue="product">
+          <Tabs defaultValue="shopify">
             <TabsList className="mb-6">
               <TabsTrigger value="product">Dane produktu</TabsTrigger>
               <TabsTrigger value="shopify">Shopify</TabsTrigger>

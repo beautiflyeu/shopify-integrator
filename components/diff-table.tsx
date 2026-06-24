@@ -15,6 +15,13 @@ import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SearchInput } from "@/components/search-input";
 import { StatusBadge } from "@/components/status-badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useSelectionStore } from "@/stores/selection";
 import type { ProductStatus } from "@/types/product";
 
@@ -26,6 +33,8 @@ export interface DiffTableRow {
   productType?: string | null;
   status: ProductStatus;
   changedFieldsCount: number;
+  family?: string | null;
+  shopifyId?: string | null;
 }
 
 const col = createColumnHelper<DiffTableRow>();
@@ -35,9 +44,24 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<ProductStatus | "all">("all");
+  const [familyFilter, setFamilyFilter] = useState<string | "all">("all");
+
+  const families = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const r of rows) {
+      const name = r.family ?? "(bez rodziny)";
+      map.set(name, (map.get(name) ?? 0) + 1);
+    }
+    return Array.from(map.entries())
+      .sort((a, b) => a[0].localeCompare(b[0], "pl"))
+      .map(([name, count]) => ({ name, count }));
+  }, [rows]);
 
   const filtered = useMemo(() => {
     let data = rows;
+    if (familyFilter !== "all") {
+      data = data.filter((r) => (r.family ?? "(bez rodziny)") === familyFilter);
+    }
     if (query.trim()) {
       const term = query.toLowerCase();
       data = data.filter(
@@ -51,7 +75,7 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
       data = data.filter((r) => r.status === statusFilter);
     }
     return data;
-  }, [rows, query, statusFilter]);
+  }, [rows, query, statusFilter, familyFilter]);
 
   const columns = [
     col.display({
@@ -123,6 +147,16 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
       },
       size: 120,
     }),
+    col.accessor("shopifyId", {
+      header: "Shopify",
+      cell: (info) =>
+        info.getValue() ? (
+          <span className="text-xs font-medium text-green-600">✓</span>
+        ) : (
+          <span className="text-xs text-muted-foreground">—</span>
+        ),
+      size: 70,
+    }),
   ];
 
   const table = useReactTable({
@@ -143,7 +177,7 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
   ];
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-3">
         <SearchInput
           value={query}
@@ -151,6 +185,19 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
           placeholder="Szukaj po nazwie, modelu lub EAN..."
           className="w-72"
         />
+        <Select value={familyFilter} onValueChange={(v: string) => setFamilyFilter(v)}>
+          <SelectTrigger className="w-52">
+            <SelectValue placeholder="Wszystkie rodziny" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Wszystkie rodziny ({rows.length})</SelectItem>
+            {families.map((f) => (
+              <SelectItem key={f.name} value={f.name}>
+                {f.name} ({f.count})
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <div className="flex gap-1">
           {STATUS_FILTERS.map((f) => (
             <button

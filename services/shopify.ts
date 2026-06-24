@@ -80,6 +80,7 @@ export interface ShopifyProduct {
       node: {
         id: string;
         sku: string;
+        barcode: string | null;
         price: string;
         compareAtPrice: string | null;
         selectedOptions: Array<{ name: string; value: string }>;
@@ -109,7 +110,7 @@ const PRODUCTS_QUERY = `
           variants(first: 100) {
             edges {
               node {
-                id sku price compareAtPrice weight weightUnit
+                id sku price compareAtPrice weight weightUnit barcode
                 selectedOptions { name value }
                 image { url }
               }

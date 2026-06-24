@@ -1,10 +1,12 @@
 import { fetchAllProducts } from "@/services/beautifly";
+import { fetchAllShopifyProducts } from "@/services/shopify";
 import { normalizeListItem } from "@/modules/pim/normalize";
+import { normalizeShopifyProduct } from "@/modules/shopify/normalize";
 import { diffProduct } from "@/modules/diff/diffProduct";
 import { MetricCard } from "@/components/metric-card";
 import { DiffTable, type DiffTableRow } from "@/components/diff-table";
 import { DashboardHeader } from "@/components/dashboard-header";
-import type { ProductStatus } from "@/types/product";
+import type { NormalizedProduct, ProductStatus } from "@/types/product";
 
 export const dynamic = "force-dynamic";
 
@@ -12,14 +14,32 @@ export default async function DashboardPage() {
   let rows: DiffTableRow[] = [];
   let error: string | null = null;
 
+  const shopifyByEan = new Map<string, NormalizedProduct>();
+  const shopifyBySku = new Map<string, NormalizedProduct>();
+  try {
+    const shopifyRaw = await fetchAllShopifyProducts();
+    for (const sp of shopifyRaw) {
+      const norm = normalizeShopifyProduct(sp);
+      const barcode = sp.variants.edges[0]?.node.barcode;
+      if (barcode) shopifyByEan.set(barcode, norm);
+      if (norm.sku) shopifyBySku.set(norm.sku, norm);
+    }
+  } catch {
+    // Shopify token nie ustawiony lub offline — dashboard działa bez tego
+  }
+
   try {
     const rawList = await fetchAllProducts("pl");
 
     rows = rawList.map((item) => {
       const normalized = normalizeListItem(item);
+      const shopifyNorm =
+        (item.ean ? shopifyByEan.get(item.ean) : undefined) ??
+        shopifyBySku.get(item.sku) ??
+        null;
       const diff = diffProduct(
         { ...normalized, description: null, seoTitle: null, seoDescription: null, price: null, compareAtPrice: null, images: [], categories: [], tags: [], variants: [], attributes: {}, parameters: {}, metafields: {}, updatedAt: null },
-        null
+        shopifyNorm
       );
       return {
         id: String(item.id),
@@ -31,6 +51,8 @@ export default async function DashboardPage() {
         changedFieldsCount: Object.values(diff.fields).filter(
           (s) => s !== "unchanged"
         ).length,
+        family: item.families?.[0]?.name ?? null,
+        shopifyId: shopifyNorm?.id ?? null,
       };
     });
   } catch (err) {

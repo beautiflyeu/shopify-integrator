@@ -1,57 +1,58 @@
-# STATUS - Shopify Integrator
+# STATUS - Shopify Integrator — Filtracja rodzin + UI Shopify
 
-*Ostatnia aktualizacja: 2026-06-22 17:30*
+*Ostatnia aktualizacja: 2026-06-22 19:45*
 
 ## Co robimy
-Budujemy lokalne narzędzie do synchronizacji produktów między Beautifly PIM API a Shopify. Aplikacja pozwala przeglądać różnice, zaznaczać pola i eksportować CSV do Shopify lub pushować przez API.
+Budujemy lokalne narzędzie do synchronizacji produktów między Beautifly PIM API a Shopify. Aktualnie przebudowaliśmy UI dashboardu — dodano filtrację po rodzinach PIM i zmieniono domyślny widok produktu na zakładkę Shopify.
 
 ## Co zostało zrobione
 
 ### W tej sesji (2026-06-22):
-- **`services/beautifly.ts`** — poprawiono `fetchAllProducts`: dodano `limit=500`, paginacja przez `meta.last_page` / `meta.current_page` (1 request dla 226 produktów)
-- **`config/category-rules.ts`** — naprawiono WSZYSTKIE 9 ścieżek kategorii (były błędne w Shopify taxonomy):
-  - Masażery: `Health & Beauty > Personal Care > Massage & Relaxation > Massagers`
-  - Urządzenia skin care: `Cosmetics > Cosmetic Tools > Skin Care Tools`
-  - LED: `Skin Care Tools > LED Light Therapy Devices`
-  - Prostownice: `Hair Styling Tools > Hair Straighteners`
-  - Spinki/klamry: `Apparel & Accessories > Clothing Accessories > Hair Accessories > Hair Pins, Claws & Clips`
-- **`app/api/shopify/categories/route.ts`** — zwraca 145 kategorii (via search po terminach) zamiast 26 root
-- **`app/api/shopify/categories/search/route.ts`** — NOWY: live search po pełnej taksonomii Shopify (26k+), min 2 znaki
-- **`components/category-selector.tsx`** — przepisano na live search do API (debounce 300ms + AbortController) zamiast filtrowania lokalnego
-- **`components/product-category-selector.tsx`** — uproszczono, usunieto props `allCategories`
-- **`stores/shopify-taxonomy.ts`** — NOWY: współdzielony Zustand store (ładuje raz, trzyma `fullNameSet` do walidacji sugestii)
-- **`INSTRUCTION/plan_kontynuacja.md`** — zapisany pełny audyt stanu wdrożenia
+- **Shopify MCP** — potwierdzono dostęp do sklepu BeautiflyGlobal.eu
+- **Skanowanie PIM** — 226 produktów, 29 rodzin, `categories` = PUSTE (nie używać)
+- **Odkrycie kodów** — 9 prefiksów (HA, DH, DE, NA, ME, EY, BE, FO, HAA) = akcesoria — każdy mapuje się na 1 rodzinę
+- **Utworzono 29 kolekcji Shopify** (przez MCP) zgodnych 1:1 z rodzinami PIM
+- **Usunięto wszystkie produkty** z Shopify (czysty start) — 0 produktów, 29 kolekcji
+- **`docs/products-collections-map.md`** — tabela wszystkich 226 produktów PIM z rodzinami i statusem sync (⬜/✅)
+- **UI przebudowa — 4 pliki zmienione:**
+  - `services/beautifly.ts` — `BeautiflyProductListItem` ma `families?: Array<{id,name}>`, `fetchAllProducts` dodaje `include=families`
+  - `components/diff-table.tsx` — `DiffTableRow` ma `family?: string | null`, scrollowalne pill-bary rodzin nad tabelą, logika filtrowania
+  - `app/dashboard/page.tsx` — każdy wiersz ma `family: item.families?.[0]?.name ?? null`
+  - `app/dashboard/[id]/page.tsx` — `<Tabs defaultValue="shopify">` (domyślna zakładka Shopify)
 
 ### Z poprzednich sesji:
-- Switche Synchronizuj/Pomiń per pole + globalny switch
-- CSV export z 64 kolumnami (format Shopify import)
-- Dashboard + detail view produktu, 3-poziomowa selekcja (katalog → produkt → pole)
-- Diff engine z SHA256 hash, vitest testy
+- `services/beautifly.ts` — `fetchAllProducts` z `limit=500`, paginacja przez `meta.last_page`
+- `config/category-rules.ts` — 9 ścieżek kategorii Shopify taxonomy
+- Dashboard + detail view, 3-poziomowa selekcja, diff engine, CSV export (64 kolumny)
 - Shopify connector (GraphQL, retry 429, cursor pagination)
 
 ## Gdzie jesteśmy
-Aplikacja jest na **Etapie 5/6** wg specyfikacji (`INSTRUCTION/plan_kontynuacja.md`). Tryb read + CSV export działa w pełni. Kategorie Shopify są poprawne i przeszukiwalne po całej taksonomii.
-
-Główny brakujący element: **matchowanie PIM ↔ Shopify** — teraz `diffProduct(pim, null)` dla każdego produktu (wszystkie widoczne jako "nowe").
+Wszystkie zmiany UI są wprowadzone. Aplikacja powinna pokazywać pill-bary 29 rodzin na górze dashboardu i otwierać produkty na zakładce Shopify. Dev server nie był uruchamiany do weryfikacji.
 
 ## Co pozostało
-- [ ] **Priorytet 1:** Matchowanie PIM ↔ Shopify po EAN — fetch Shopify products → mapa EAN→produkt → przekaż do `diffProduct(pim, shopifyMatch)` (pliki: `app/dashboard/page.tsx`, `app/dashboard/[id]/page.tsx`)
-- [ ] **Priorytet 2:** Push to Shopify API — `modules/sync/executeSync.ts` z mutacjami `productUpdate`, `variantUpdate`, `metafieldsSet`
-- [ ] **Priorytet 3:** Baza danych SQLite + Prisma — schemat `SyncHistory`, `SyncLog`, persystencja stanu między sesjami
-- [ ] **Priorytet 4:** Walidacja przed CSV export (alert o brakujących polach)
-- [ ] Wypełnić placeholder pages: `app/sync-queue/page.tsx`, `app/logs/page.tsx`
+- [ ] **Uruchomić `npm run dev`** i zweryfikować: pill-bary rodzin działają, klik produktu = zakładka Shopify, CSV export działa
+- [ ] **Naprawić pre-existing błąd TS** — `components/category-diff-row.tsx:41` — `Property 'allCategories' does not exist on type CategorySelectorProps` (nie blokuje dev server, ale blokuje `tsc --noEmit`)
+- [ ] **Import produktów do Shopify** — przez CSV export z aplikacji (zaznacz produkty rodziny → exportuj → importuj w Shopify)
+- [ ] **Aktualizacja `docs/products-collections-map.md`** — zmieniaj ⬜ → ✅ + Shopify ID po każdym imporcie
+- [ ] **Matchowanie PIM ↔ Shopify po EAN** — do wdrożenia gdy Shopify będzie miał produkty
+- [ ] **Push to Shopify API** — `modules/sync/executeSync.ts` z mutacjami `productUpdate`, `variantUpdate`, `metafieldsSet`
 
 ## Ważne decyzje/ustalenia
-- Beautifly API: `?limit=500` — 1 request dla 226 produktów, paginacja przez `meta.last_page`
-- Kategorie Shopify: GraphQL `taxonomy { categories(search: "...") }` — wyszukiwanie po fullName
-- Sugestie kategorii walidowane vs rzeczywista taksonomia (nie pokażą się jeśli string nie pasuje)
-- `useTaxonomyStore` → ładuje `/api/shopify/categories` (145 pozycji) raz na sesję
-- Live search = `/api/shopify/categories/search?q=` — pełna taksonomia, min 2 znaki, max 50 wyników
-- Matchowanie PIM ↔ Shopify po **EAN** (nie SKU — null w Shopify)
+- **PIM `families`** = źródło prawdy dla kolekcji Shopify (29 rodzin). `categories` w API jest PUSTE — nie używać
+- **Preferowany import**: CSV export z aplikacji lokalnej (więcej danych, 64 kolumny) — NIE MCP direct
+- **Matchowanie PIM ↔ Shopify po EAN** (nie SKU — null w Shopify)
+- **3 produkty bez rodziny**: SkinMist PRO (id:221), D'Arsonval Pro (id:222), IonSteam Balance (id:220)
 - `SHOP_DOMAIN=beautifly-pl.myshopify.com`
-- Brak bazy danych — stan synchronizacji obliczany na żywo
+- **`docs/products-collections-map.md`** = jedyne miejsce śledzenia statusu importu produktów
+- **Sklep Shopify** = 0 produktów, 29 pustych kolekcji gotowych na import
+
+## Problemy/blokery
+- Pre-existing błąd TS w `components/category-diff-row.tsx:41` — `allCategories` prop nie istnieje w `CategorySelectorProps`. Nie blokuje dev server, ale blokuje `npx tsc --noEmit`. Wymaga naprawy.
+- Obrazy z Google Drive (`lh3.googleusercontent.com`) nie są publicznie dostępne — Shopify odrzuca te URL-e cicho (featuredImageUrl: null). Produkty będą bez obrazów przez CSV import.
 
 ## Następne kroki
-1. Zaimplementować matchowanie PIM ↔ Shopify w `app/dashboard/page.tsx` (fetch Shopify → mapa EAN → diffProduct z drugim argumentem)
-2. Napisać `modules/sync/executeSync.ts` z GraphQL mutations do Shopify
-3. Dodać Prisma + SQLite dla historii synca i logów
+1. Uruchomić `npm run dev` → sprawdzić pill-bary rodzin + domyślna zakładka Shopify
+2. Naprawić błąd TS w `category-diff-row.tsx`
+3. Zaznaczyć produkty wybranej rodziny (np. LIGHT THERAPY) → wyeksportować CSV → zaimportować w Shopify admin
+4. Po imporcie zaktualizować `docs/products-collections-map.md` (⬜ → ✅ + Shopify ID)
+5. Użyć MCP do weryfikacji: które produkty z rodziny trafiły do kolekcji Shopify

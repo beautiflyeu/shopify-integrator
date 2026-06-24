@@ -15,6 +15,7 @@ export interface BeautiflyProductListItem {
   model?: string | null;
   name: string;
   ean?: string | null;
+  families?: Array<{ id: number; name: string }>;
 }
 
 export interface BeautiflyProduct {
@@ -97,7 +98,7 @@ export async function fetchAllProducts(
   let hasMore = true;
 
   while (hasMore) {
-    const params = new URLSearchParams({ fields: "id,sku,model,name,ean", lang, limit: "500", page: String(page) });
+    const params = new URLSearchParams({ fields: "id,sku,model,name,ean,families", lang, limit: "500", include: "families", page: String(page) });
     const res = await fetch(`${BASE_URL}/api/v1/products?${params}`, {
       headers: getHeaders(),
       next: { revalidate: 300 },
