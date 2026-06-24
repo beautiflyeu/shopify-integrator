@@ -40,7 +40,7 @@ export interface DiffTableRow {
 const col = createColumnHelper<DiffTableRow>();
 
 function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
-  const { isProductSelected, toggleProduct, setAllSelected, allSelected, selectedProductIds } = useSelectionStore();
+  const { isProductSelected, toggleProduct, selectProducts, deselectProducts, selectedProductIds } = useSelectionStore();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<ProductStatus | "all">("all");
@@ -77,13 +77,20 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
     return data;
   }, [rows, query, statusFilter, familyFilter]);
 
+  const filteredIds = filtered.map((r) => r.id);
+  const allFilteredSelected =
+    filteredIds.length > 0 && filteredIds.every((id) => selectedProductIds.has(id));
+
   const columns = [
     col.display({
       id: "select",
       header: () => (
         <Checkbox
-          checked={allSelected}
-          onCheckedChange={(v) => setAllSelected(Boolean(v))}
+          checked={allFilteredSelected}
+          onCheckedChange={(v) => {
+            if (v) selectProducts(filteredIds);
+            else deselectProducts(filteredIds);
+          }}
         />
       ),
       cell: ({ row }) => (
