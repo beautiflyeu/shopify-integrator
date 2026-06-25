@@ -1,58 +1,51 @@
-# STATUS - Shopify Integrator — Category Search + Rules Editor
+# STATUS - Shopify Integrator + Shopify Store Setup
 
-*Ostatnia aktualizacja: 2026-06-24 19:15*
+*Ostatnia aktualizacja: 2026-06-24 13:30*
 
 ## Co robimy
-Budujemy system wyszukiwania i zarządzania kategoriami Shopify — wyszukiwarka w UI + reguły auto-mapowania + edytor reguł w sidebarze.
+Rozwijamy aplikację Shopify Integrator (lokalny diff/sync dashboard) oraz równolegle konfigurujemy sklep Shopify (kolekcje, metaobiekty, kategorie produktów).
 
 ## Co zostało zrobione
 
-### Naprawa eksportu CSV
-- `app/api/export/csv/route.ts` — wyłączone auto-przypisywanie kategorii (było zepsute)
-- CSV teraz zawsze używa **angielskich** ścieżek kategorii (Shopify akceptuje EN, nie PL)
+### Shopify Integrator (aplikacja Next.js)
+- **Auto-sugestia kategorii** — dodano toggle ON/OFF w `/rules`
+  - `stores/category-rules.ts` — dodano `autoSuggest: boolean` + `setAutoSuggest()`
+  - `components/product-category-selector.tsx` — respektuje ustawienie; pokazuje pomarańczowe ostrzeżenie "Brak sugestii" gdy auto-sugestia włączona ale nic nie znajdzie
+  - `app/rules/page.tsx` — Switch toggle na górze strony
+- **Skill `/shopify-assign-collections`** — utworzono skill do przypisywania produktów do kolekcji
+  - Plik: `/Users/mateuszbukala/.claude/skills/shopify-assign-collections/SKILL.md`
+  - Logika: pobiera produkty + kolekcje, dopasowuje tag → kolekcja, pokazuje tabelę propozycji, czeka na potwierdzenie, wykonuje `add-to-collection`
 
-### Wyszukiwarka kategorii
-- `components/category-selector.tsx` — wyszukuje lokalnie z załadowanego store (nie live API)
-- Polska mapa aliasów: `masażer`→`massager`, `prostownica`→`straightener` itp.
-- `app/api/shopify/categories/route.ts` — naprawiono: usunięto `@inContext(language: PL)` (nie istnieje w Admin API), przywrócono `revalidate = 3600`
-
-### Reguły kategorii — nowa architektura
-- `config/category-rules.ts` — uproszczony interface: tylko `keywords[]` + `englishFullName` (usunięto `category` PL)
-- `stores/category-rules.ts` — nowy Zustand store z `persist` (localStorage), CRUD reguł
-- `lib/suggest-category.ts` — zwraca `string | null` (angielski fullName), przyjmuje `rules` jako param
-- `components/category-rule-badges.tsx` — nowy komponent: badge'y reguł obok selectora, klik → wypełnia kategorię
-- `components/category-rules-panel.tsx` — zwijany panel pod tabelą (read-only lista reguł)
-
-### Edytor reguł w sidebarze
-- `components/sidebar.tsx` — dodano zakładkę "Reguły kategorii" (ikona Tag, link `/rules`)
-- `app/rules/page.tsx` — nowa strona: lista reguł z edycją/usuwaniem + przycisk "Dodaj"
-- `components/rule-editor.tsx` — formularz: keywords + wyszukiwarka taksonomii Shopify
-
-### Zaktualizowane komponenty
-- `components/product-category-selector.tsx` — używa store reguł, badge'y, angielski do CSV
-- `components/category-diff-row.tsx` — jw., uproszczony (bez PL→EN translacji)
-
-### Nowe reguły
-Dodano: `kawitacyjny/cavitation/ultrasonic` (Skin Care Tools), `suszarka/dryer` (Hair Dryers), `microcurrent/ems` (Microcurrent & EMS Facial Devices)
+### Shopify Store (MCP)
+- **20 produktów** przypisanych do kolekcji na podstawie tagów:
+  - LIGHT THERAPY → 11 produktów
+  - GOLDEN → 7 produktów
+  - WŁOSY → 1 (Suszarka MistEssence)
+  - BRWI → 1 (Pęseta EY-2)
+- **Metaobiekt "Homepage tab"** — utworzono definicję (`homepage_tab`) z polami `title` + `collection`
+  - ID definicji: `gid://shopify/MetaobjectDefinition/32110051654`
+- **3 wpisy metaobiektów** — What's hot (→GOLDEN), Best sellers (→LIGHT THERAPY), Sale (→DEPILATORY)
+- **29 kolekcji opublikowanych** w kanale "Sklep online" (były niewidoczne w pickerze edytora motywu)
 
 ## Gdzie jesteśmy
-Wszystko gotowe i skompilowane (TS 0 błędów). Serwer uruchomiony świeżo po wyczyszczeniu cache.
+Kolekcje są opublikowane i widoczne w edytorze motywu. Użytkownik ma ręcznie przypisać kolekcje do zakładek w sekcji `product-tabs` na homepage.
 
 ## Co pozostało
+- [ ] Ręczne przypisanie kolekcji w edytorze motywu: Online Store → Customize → homepage → sekcja zakładek → blok po bloku wybrać kolekcję (What's hot → GOLDEN, Best sellers → LIGHT THERAPY, Sale → DEPILATORY)
+- [ ] Uzupełnienie produktów w pustych kolekcjach (PEELING KAWITACYJNY, MEZOTERAPIA itp.)
 - [ ] Przetestować eksport CSV z angielską kategorią → import do Shopify
-- [ ] Sprawdzić czy badge'y poprawnie wypełniają kategorię i eksport działa
-- [ ] Przetestować dodawanie nowej reguły przez `/rules`
-- [ ] Sprawdzić persist store po odświeżeniu (reguły zostają)
-- [ ] Naprawić pre-existing TS błąd — `components/category-diff-row.tsx` (był przed naszymi zmianami)
+- [ ] Dalsza budowa Shopify Integratora (etap: porównanie z Shopify read-only)
 
 ## Ważne decyzje/ustalenia
-- **CSV używa angielskich ścieżek** — Shopify lepiej akceptuje EN niż PL
-- **Shopify Admin API taxonomy** zawsze zwraca EN — `@inContext(language: PL)` nie istnieje w Admin API (tylko Storefront)
-- **`CategoryRule` interface** — tylko `keywords[]` + `englishFullName`, bez polskiej ścieżki
-- **Store z persist** — reguły zapisywane w localStorage pod kluczem `"category-rules"`
-- **Auto-suggest** w `diff-table.tsx` jest wyłączony (zakomentowany) — ręczny wybór lub przez badge
+- Sekcja `product-tabs` w motywie `sleek-shopify-bfg` używa **bezpośredniego pickera kolekcji** (nie metaobiektu) — pole `"collection": ""` per blok zakładki
+- Motywy: MAIN = `gid://shopify/OnlineStoreTheme/191657476422` (live), DEV = `gid://shopify/OnlineStoreTheme/191657509190`
+- Kolekcje były niepublikowane → stąd "Nie znaleziono żadnych kolekcji" w edytorze — naprawiono
+- Reguły kategorii + auto-sugestia: localStorage `"category-rules"` (Zustand persist)
+- Skill `shopify-assign-collections` — zawsze czeka na potwierdzenie przed zapisem
+- CSV używa angielskich ścieżek kategorii (Shopify Admin API zwraca EN, nie PL)
+- `CategoryRule` interface: tylko `keywords[]` + `englishFullName`
 
 ## Następne kroki
-1. Hard refresh (`⌘⇧R`) i test eksportu CSV → import do Shopify
-2. Test strony `/rules` — dodanie nowej reguły
-3. Opcjonalnie: test wyszukiwarki z polskim aliasem np. `masażer`
+1. W edytorze motywu przypisać kolekcje do 3 zakładek na homepage i zapisać
+2. Jeśli sekcja wymaga metaobiektów zamiast kolekcji — wpisy już są gotowe (What's hot, Best sellers, Sale w `homepage_tab`)
+3. Kontynuować budowę Shopify Integratora: dodać porównanie z Shopify (read-only diff)
