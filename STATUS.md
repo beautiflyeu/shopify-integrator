@@ -1,51 +1,75 @@
-# STATUS - Shopify Integrator + Shopify Store Setup
+# STATUS - Shopify Integrator — Pełna przebudowa + widok porównawczy
 
-*Ostatnia aktualizacja: 2026-06-24 13:30*
+*Ostatnia aktualizacja: 2026-06-26 09:30*
 
 ## Co robimy
-Rozwijamy aplikację Shopify Integrator (lokalny diff/sync dashboard) oraz równolegle konfigurujemy sklep Shopify (kolekcje, metaobiekty, kategorie produktów).
+Budujemy lokalny dashboard do synchronizacji produktów PIM Beautifly → Shopify.
+W tej sesji przebudowaliśmy całą architekturę danych i widok produktu.
 
 ## Co zostało zrobione
 
-### Shopify Integrator (aplikacja Next.js)
-- **Auto-sugestia kategorii** — dodano toggle ON/OFF w `/rules`
-  - `stores/category-rules.ts` — dodano `autoSuggest: boolean` + `setAutoSuggest()`
-  - `components/product-category-selector.tsx` — respektuje ustawienie; pokazuje pomarańczowe ostrzeżenie "Brak sugestii" gdy auto-sugestia włączona ale nic nie znajdzie
-  - `app/rules/page.tsx` — Switch toggle na górze strony
-- **Skill `/shopify-assign-collections`** — utworzono skill do przypisywania produktów do kolekcji
-  - Plik: `/Users/mateuszbukala/.claude/skills/shopify-assign-collections/SKILL.md`
-  - Logika: pobiera produkty + kolekcje, dopasowuje tag → kolekcja, pokazuje tabelę propozycji, czeka na potwierdzenie, wykonuje `add-to-collection`
+### SQLite (zastąpiono JSON flat files)
+- `lib/db.ts` (NOWY) — singleton `better-sqlite3`, tabele: `exported_products`, `field_selections`, `settings`, auto-migracja z JSON
+- `lib/exported-products-db.ts` (NOWY) — zastępuje `lib/exported-products-file.ts`
+- `lib/field-selections-db.ts` (NOWY) — CRUD per-produkt selekcji pól
+- `data/app.db` — baza SQLite gotowa, 22 wpisy zmigrowały automatycznie z JSON
+- `next.config.ts` — dodano `serverExternalPackages: ["better-sqlite3"]`
+- `package.json` — dodano `better-sqlite3` + `@types/better-sqlite3`
 
-### Shopify Store (MCP)
-- **20 produktów** przypisanych do kolekcji na podstawie tagów:
-  - LIGHT THERAPY → 11 produktów
-  - GOLDEN → 7 produktów
-  - WŁOSY → 1 (Suszarka MistEssence)
-  - BRWI → 1 (Pęseta EY-2)
-- **Metaobiekt "Homepage tab"** — utworzono definicję (`homepage_tab`) z polami `title` + `collection`
-  - ID definicji: `gid://shopify/MetaobjectDefinition/32110051654`
-- **3 wpisy metaobiektów** — What's hot (→GOLDEN), Best sellers (→LIGHT THERAPY), Sale (→DEPILATORY)
-- **29 kolekcji opublikowanych** w kanale "Sklep online" (były niewidoczne w pickerze edytora motywu)
+### API routes — przełączone na SQLite
+- `app/api/exported-products/route.ts`
+- `app/api/export/csv/route.ts`
+- `app/api/shopify/import-status/route.ts`
+- `app/api/sync/products/route.ts`
+- `app/api/category-rules/route.ts` — używa `settings` tabeli
+- `app/api/field-selections/[id]/route.ts` (NOWY) — GET/PUT selekcji pól per produkt
+
+### Uproszczenie UI
+- `components/dashboard-header.tsx` — usunięto "Synchronizuj zaznaczone" (API sync), dodano "Eksportuj kolejkę (N)"
+- `components/diff-table.tsx` — dwie niezależne ikony: Upload (eksportowano CSV) + Shopify SVG (potwierdzony EAN)
+
+### Nowy widok produktu: side-by-side porównanie
+- `components/product-comparison-view.tsx` (NOWY) — 5 kolumn:
+  - `Pole PIM | Wartość PIM | Pole Shopify | Wartość Shopify | Sync?`
+  - PIM po lewej, Shopify po prawej
+  - Każda etykieta pola: dwie linie — nazwa PL + techniczny klucz (`description` / `descriptionHtml`)
+  - Kolory wierszy: pomarańczowy=zmienione, niebieski=tylko PIM, zielona kropka=OK
+  - Miniatury zdjęć 40×40px z hover podglądem 200×200px
+  - Double-click na "Porównanie pól" → zaznacza/odznacza wszystkie zmienione pola
+  - Checkboxy per pole zapisują się do SQLite (persystują po odświeżeniu)
+  - Sekcja "Dane PIM" pod tabelą: familie, kategorie, atrybuty, parametry
+- `app/dashboard/[id]/page.tsx` — przebudowany: bez zakładek, używa `ProductComparisonView`
+
+### Kolejka eksportu
+- `stores/export-queue.ts` (NOWY) — Zustand + localStorage persist (żyje między sesjami)
+- Widok produktu: przycisk `+ Dodaj do kolejki` / `✓ W kolejce` obok "Eksportuj CSV"
+- Dashboard header: `Eksportuj kolejkę (N)` pojawia się gdy kolejka niepusta
 
 ## Gdzie jesteśmy
-Kolekcje są opublikowane i widoczne w edytorze motywu. Użytkownik ma ręcznie przypisać kolekcje do zakładek w sekcji `product-tabs` na homepage.
+Wszystkie zaplanowane funkcje zaimplementowane. TypeScript 0 błędów. Serwer startuje, strona produktu 206 renderuje się z danymi z PIM + Shopify (widać preload obrazków Shopify CDN).
 
 ## Co pozostało
-- [ ] Ręczne przypisanie kolekcji w edytorze motywu: Online Store → Customize → homepage → sekcja zakładek → blok po bloku wybrać kolekcję (What's hot → GOLDEN, Best sellers → LIGHT THERAPY, Sale → DEPILATORY)
-- [ ] Uzupełnienie produktów w pustych kolekcjach (PEELING KAWITACYJNY, MEZOTERAPIA itp.)
-- [ ] Przetestować eksport CSV z angielską kategorią → import do Shopify
-- [ ] Dalsza budowa Shopify Integratora (etap: porównanie z Shopify read-only)
+- [ ] Przetestować wizualnie w przeglądarce — sprawdzić 5-kolumnową tabelę, kolory diff, hover miniaturek
+- [ ] Sprawdzić double-click na "Porównanie pól" — czy zaznacza zmienione pola
+- [ ] Sprawdzić kolejkę eksportu — dodać produkt → odświeżyć → czy zostaje
+- [ ] Sprawdzić "Eksportuj kolejkę" w dashboardzie
+- [ ] Sprawdzić czy selekcja pól persystuje po odświeżeniu (SQLite)
 
 ## Ważne decyzje/ustalenia
-- Sekcja `product-tabs` w motywie `sleek-shopify-bfg` używa **bezpośredniego pickera kolekcji** (nie metaobiektu) — pole `"collection": ""` per blok zakładki
-- Motywy: MAIN = `gid://shopify/OnlineStoreTheme/191657476422` (live), DEV = `gid://shopify/OnlineStoreTheme/191657509190`
-- Kolekcje były niepublikowane → stąd "Nie znaleziono żadnych kolekcji" w edytorze — naprawiono
-- Reguły kategorii + auto-sugestia: localStorage `"category-rules"` (Zustand persist)
-- Skill `shopify-assign-collections` — zawsze czeka na potwierdzenie przed zapisem
-- CSV używa angielskich ścieżek kategorii (Shopify Admin API zwraca EN, nie PL)
-- `CategoryRule` interface: tylko `keywords[]` + `englishFullName`
+- **SQLite**: `data/app.db`, biblioteka `better-sqlite3` (synchroniczna), `serverExternalPackages` w next.config
+- **Migracja JSON→SQLite**: automatyczna przy pierwszym uruchomieniu, stare pliki → `.migrated`
+- **API sync ("Synchronizuj zaznaczone")**: usunięte z UI, kod route.ts pozostaje
+- **Diff kolory wierszy**: pomarańczowy=zmienione, niebieski=tylko PIM, szary=tylko Shopify
+- **Ikony w tabeli**: Upload icon = eksportowano CSV; Shopify SVG = potwierdzony przez EAN
+- **Selekcja pól**: persystowana per-produkt w `field_selections` SQLite
+- **Kolejka eksportu**: `stores/export-queue.ts`, Zustand + localStorage key `"export-queue"`
+- **Category rules**: `settings` tabela SQLite (key="category-rules"), fallback do defaults gdy brak
+- **5 kolumn w tabeli**: `Pole PIM | Wartość PIM | Pole Shopify | Wartość Shopify | Sync?`
+- **Double-click**: na nagłówku "Porównanie pól" → toggle zaznaczenia wszystkich zmienionych pól
 
 ## Następne kroki
-1. W edytorze motywu przypisać kolekcje do 3 zakładek na homepage i zapisać
-2. Jeśli sekcja wymaga metaobiektów zamiast kolekcji — wpisy już są gotowe (What's hot, Best sellers, Sale w `homepage_tab`)
-3. Kontynuować budowę Shopify Integratora: dodać porównanie z Shopify (read-only diff)
+1. Otworzyć `http://localhost:3000/dashboard` w przeglądarce
+2. Kliknąć w produkt z shopifyId (np. 206) → sprawdzić side-by-side widok
+3. Double-click na "Porównanie pól" → potwierdzić zaznaczanie zmienionych
+4. "Dodaj do kolejki" → odświeżyć → potwierdzić persistencję
+5. Wrócić do dashboardu → sprawdzić przycisk "Eksportuj kolejkę (1)"

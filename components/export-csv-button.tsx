@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Download, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCategoryStore } from "@/stores/category";
+import { useExportedProductsStore } from "@/stores/exported-products";
 
 interface ExportCsvButtonProps {
   getProductIds: () => string[];
@@ -23,6 +24,7 @@ export function ExportCsvButton({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const getCategoryMap = useCategoryStore((s) => s.getCategoryMap);
+  const loadExported = useExportedProductsStore((s) => s.load);
 
   async function handleExport() {
     const ids = getProductIds();
@@ -51,6 +53,7 @@ export function ExportCsvButton({
       a.href = url;
       a.click();
       URL.revokeObjectURL(url);
+      await loadExported();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Błąd eksportu");
     } finally {

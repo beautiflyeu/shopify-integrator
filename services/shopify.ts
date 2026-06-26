@@ -85,8 +85,8 @@ export interface ShopifyProduct {
         compareAtPrice: string | null;
         selectedOptions: Array<{ name: string; value: string }>;
         image: { url: string } | null;
-        weight: number;
-        weightUnit: string;
+        weight?: number | null;
+        weightUnit?: string | null;
       };
     }>;
   };
@@ -105,12 +105,12 @@ const PRODUCTS_QUERY = `
             maxVariantPrice { amount currencyCode }
           }
           images(first: 20) {
-            edges { node { id url altText position } }
+            edges { node { id url altText } }
           }
           variants(first: 100) {
             edges {
               node {
-                id sku price compareAtPrice weight weightUnit barcode
+                id sku price compareAtPrice barcode
                 selectedOptions { name value }
                 image { url }
               }
@@ -157,12 +157,12 @@ const SINGLE_PRODUCT_QUERY = `
         maxVariantPrice { amount currencyCode }
       }
       images(first: 20) {
-        edges { node { id url altText position } }
+        edges { node { id url altText } }
       }
       variants(first: 100) {
         edges {
           node {
-            id sku price compareAtPrice weight weightUnit
+            id sku price compareAtPrice barcode
             selectedOptions { name value }
             image { url }
           }

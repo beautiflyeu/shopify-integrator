@@ -1,6 +1,7 @@
 import { fetchProduct, ALL_INCLUDES } from "@/services/beautifly";
 import { normalizeProduct } from "@/modules/pim/normalize";
 import { buildCsvPayload } from "@/modules/sync/buildCsvPayload";
+import { appendExportedProducts } from "@/lib/exported-products-db";
 
 const MAX_PRODUCTS = 50;
 
@@ -37,6 +38,13 @@ export async function POST(request: Request) {
   const fieldSet = fieldKeys && fieldKeys.length > 0 ? new Set(fieldKeys) : undefined;
 
   const csv = "﻿" + buildCsvPayload(products, fieldSet, categoryMap);
+
+  try {
+    const now = new Date().toISOString();
+    appendExportedProducts(ids.map((id) => ({ pimId: id, method: "csv", exportedAt: now })));
+  } catch {
+    // non-fatal — don't block the download
+  }
 
   const now = new Date();
   const date = now.toISOString().slice(0, 10);

@@ -1,0 +1,135 @@
+{
+  "exports": [
+    {
+      "pimId": "206",
+      "method": "api",
+      "shopifyId": "gid://shopify/Product/15627630510406",
+      "exportedAt": "2026-06-25T16:57:19Z"
+    },
+    {
+      "pimId": "41",
+      "method": "api",
+      "shopifyId": "gid://shopify/Product/15627630608710",
+      "exportedAt": "2026-06-25T16:55:38Z"
+    },
+    {
+      "pimId": "198",
+      "method": "api",
+      "shopifyId": "gid://shopify/Product/15627630707014",
+      "exportedAt": "2026-06-25T16:54:28Z"
+    },
+    {
+      "pimId": "195",
+      "method": "api",
+      "shopifyId": "gid://shopify/Product/15627630772550",
+      "exportedAt": "2026-06-25T17:07:17Z"
+    },
+    {
+      "pimId": "196",
+      "method": "api",
+      "shopifyId": "gid://shopify/Product/15627630805318",
+      "exportedAt": "2026-06-24T23:03:06Z"
+    },
+    {
+      "pimId": "176",
+      "method": "api",
+      "shopifyId": "gid://shopify/Product/15627630903622",
+      "exportedAt": "2026-06-25T17:09:51Z"
+    },
+    {
+      "pimId": "172",
+      "method": "api",
+      "shopifyId": "gid://shopify/Product/15627630936390",
+      "exportedAt": "2026-06-25T17:09:57Z"
+    },
+    {
+      "pimId": "168",
+      "method": "api",
+      "shopifyId": "gid://shopify/Product/15627631001926",
+      "exportedAt": "2026-06-25T17:08:40Z"
+    },
+    {
+      "pimId": "43",
+      "method": "api",
+      "shopifyId": "gid://shopify/Product/15627631067462",
+      "exportedAt": "2026-06-25T17:02:26Z"
+    },
+    {
+      "pimId": "42",
+      "method": "api",
+      "shopifyId": "gid://shopify/Product/15627631132998",
+      "exportedAt": "2026-06-25T17:00:07Z"
+    },
+    {
+      "pimId": "183",
+      "method": "api",
+      "shopifyId": "gid://shopify/Product/15627631165766",
+      "exportedAt": "2026-06-25T17:00:52Z"
+    },
+    {
+      "pimId": "214",
+      "method": "api",
+      "shopifyId": "gid://shopify/Product/15627713741126",
+      "exportedAt": "2026-06-25T05:13:46Z"
+    },
+    {
+      "pimId": "213",
+      "method": "api",
+      "shopifyId": "gid://shopify/Product/15627713806662",
+      "exportedAt": "2026-06-24T23:48:46Z"
+    },
+    {
+      "pimId": "4",
+      "method": "api",
+      "shopifyId": "gid://shopify/Product/15627713872198",
+      "exportedAt": "2026-06-25T15:52:49Z"
+    },
+    {
+      "pimId": "2",
+      "method": "api",
+      "shopifyId": "gid://shopify/Product/15627713937734",
+      "exportedAt": "2026-06-25T16:53:08Z"
+    },
+    {
+      "pimId": "5",
+      "method": "api",
+      "shopifyId": "gid://shopify/Product/15627714003270",
+      "exportedAt": "2026-06-25T16:59:09Z"
+    },
+    {
+      "pimId": "1",
+      "method": "api",
+      "shopifyId": "gid://shopify/Product/15627714068806",
+      "exportedAt": "2026-06-25T17:09:57Z"
+    },
+    {
+      "pimId": "3",
+      "method": "api",
+      "shopifyId": "gid://shopify/Product/15627714134342",
+      "exportedAt": "2026-06-25T16:58:08Z"
+    },
+    {
+      "pimId": "133",
+      "method": "api",
+      "shopifyId": "gid://shopify/Product/15627740578118",
+      "exportedAt": "2026-06-25T17:03:10Z"
+    },
+    {
+      "pimId": "175",
+      "method": "api",
+      "shopifyId": "gid://shopify/Product/15627740610886",
+      "exportedAt": "2026-06-25T00:02:26Z"
+    },
+    {
+      "pimId": "164",
+      "method": "api",
+      "shopifyId": "gid://shopify/Product/15628835848518",
+      "exportedAt": "2026-06-25T21:47:06Z"
+    },
+    {
+      "pimId": "216",
+      "method": "csv",
+      "exportedAt": "2026-06-26T05:44:07.947Z"
+    }
+  ]
+}

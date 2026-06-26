@@ -5,7 +5,6 @@ import { normalizeShopifyProduct } from "@/modules/shopify/normalize";
 import { diffProduct } from "@/modules/diff/diffProduct";
 import { MetricCard } from "@/components/metric-card";
 import { DiffTable, type DiffTableRow } from "@/components/diff-table";
-import { DashboardHeader } from "@/components/dashboard-header";
 import type { NormalizedProduct, ProductStatus } from "@/types/product";
 
 export const dynamic = "force-dynamic";
@@ -64,23 +63,21 @@ export default async function DashboardPage() {
 
   return (
     <div className="p-6">
-      <DashboardHeader />
-
-      {error ? (
-        <div className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-          {error}
-        </div>
-      ) : (
-        <>
-          <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <MetricCard label="Łącznie" value={rows.length} type="total" />
-            <MetricCard label="Nowe" value={countByStatus("new")} type="new" />
-            <MetricCard label="Zmienione" value={countByStatus("changed")} type="changed" />
-            <MetricCard label="Wymaga decyzji" value={countByStatus("needs_decision")} type="needs_decision" />
+        {error ? (
+          <div className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+            {error}
           </div>
-          <DiffTable rows={rows} />
-        </>
-      )}
+        ) : (
+          <>
+            <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <MetricCard label="Łącznie" value={rows.length} type="total" />
+              <MetricCard label="Nowe" value={countByStatus("new")} type="new" />
+              <MetricCard label="Zmienione" value={countByStatus("changed")} type="changed" />
+              <MetricCard label="Wymaga decyzji" value={countByStatus("needs_decision")} type="needs_decision" />
+            </div>
+            <DiffTable rows={rows} />
+          </>
+        )}
     </div>
   );
 }

@@ -6,7 +6,7 @@ export function normalizeShopifyProduct(raw: ShopifyProduct): NormalizedProduct 
   const images = raw.images.edges.map((e) => ({
     url: e.node.url,
     alt: e.node.altText,
-    position: e.node.position,
+    position: 0,
   }));
 
   const variants: NormalizedVariant[] = raw.variants.edges.map((e) => {

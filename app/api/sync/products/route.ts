@@ -10,6 +10,7 @@ import {
   addProductToCollection,
 } from "@/services/shopify";
 import { fetchShopifyCategories } from "@/services/shopify-taxonomy";
+import { appendExportedProducts } from "@/lib/exported-products-db";
 
 const MAX_PRODUCTS = 10;
 
@@ -118,6 +119,18 @@ export async function POST(request: Request) {
         message: err instanceof Error ? err.message : "Unknown error",
       });
     }
+  }
+
+  try {
+    const now = new Date().toISOString();
+    const synced = results
+      .filter((r): r is typeof r & { status: "created" | "updated"; shopifyId: string } =>
+        r.status !== "error" && !!r.shopifyId
+      )
+      .map((r) => ({ pimId: r.pimId, method: "api" as const, shopifyId: r.shopifyId, exportedAt: now }));
+    if (synced.length > 0) appendExportedProducts(synced);
+  } catch {
+    // non-fatal
   }
 
   return NextResponse.json({ results });

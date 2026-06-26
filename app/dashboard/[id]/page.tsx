@@ -1,14 +1,16 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { fetchProduct, ALL_INCLUDES } from "@/services/beautifly";
+import { fetchShopifyProduct } from "@/services/shopify";
 import { normalizeProduct } from "@/modules/pim/normalize";
+import { normalizeShopifyProduct } from "@/modules/shopify/normalize";
 import { diffProduct } from "@/modules/diff/diffProduct";
-import { FIELD_MAP } from "@/config/field-map";
-import { FieldDiffDetail } from "@/components/field-diff-detail";
-import { StatusBadge } from "@/components/status-badge";
-import { ProductInfoTab } from "@/components/product-info-tab";
+import { readExportedProducts } from "@/lib/exported-products-db";
+import { getFieldSelections } from "@/lib/field-selections-db";
+import { ProductComparisonView } from "@/components/product-comparison-view";
 import { ProductCategorySelector } from "@/components/product-category-selector";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ProductPageActions } from "@/components/product-page-actions";
+import { FIELD_MAP } from "@/config/field-map";
 
 export const dynamic = "force-dynamic";
 
@@ -21,71 +23,74 @@ export default async function ProductDetailPage({ params }: Props) {
 
   let error: string | null = null;
   let normalized = null;
+  let shopifyNorm = null;
   let diff = null;
-  let raw = null;
+  let fieldSelections: Record<string, boolean> = {};
 
   try {
-    raw = await fetchProduct(Number(id), { lang: "pl", include: [...ALL_INCLUDES] });
+    const raw = await fetchProduct(Number(id), { lang: "pl", include: [...ALL_INCLUDES] });
     normalized = normalizeProduct(raw);
-    diff = diffProduct(normalized, null);
+
+    const exportedEntry = readExportedProducts().find(
+      (e) => e.pimId === String(id) && e.shopifyId
+    );
+    const shopifyRaw = exportedEntry?.shopifyId
+      ? await fetchShopifyProduct(exportedEntry.shopifyId).catch(() => null)
+      : null;
+    shopifyNorm = shopifyRaw ? normalizeShopifyProduct(shopifyRaw) : null;
+
+    diff = diffProduct(normalized, shopifyNorm);
+    fieldSelections = getFieldSelections(id);
   } catch (err) {
     error = err instanceof Error ? err.message : "Błąd pobierania produktu";
   }
 
+  const allFieldKeys = FIELD_MAP.map((f) => String(f.pimKey));
+  const savedFieldKeys = Object.keys(fieldSelections).length > 0
+    ? allFieldKeys.filter((k) => fieldSelections[k] !== false)
+    : undefined;
+
   return (
     <div className="p-6">
-      <nav className="mb-4 flex items-center gap-1 text-sm text-muted-foreground">
-        <Link href="/dashboard" className="hover:text-foreground">
-          Dashboard
-        </Link>
-        <ChevronRight className="h-4 w-4" />
-        <span className="text-foreground">{normalized?.name ?? `Produkt #${id}`}</span>
-      </nav>
+      <div className="mb-4 flex items-start justify-between gap-4">
+        <nav className="flex items-center gap-1 text-sm text-muted-foreground">
+          <Link href="/dashboard" className="hover:text-foreground">
+            Dashboard
+          </Link>
+          <ChevronRight className="h-4 w-4" />
+          <span className="text-foreground">{normalized?.name ?? `Produkt #${id}`}</span>
+        </nav>
+        {normalized && (
+          <ProductPageActions productId={id} fieldKeys={savedFieldKeys} />
+        )}
+      </div>
 
       {error ? (
         <div className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {error}
         </div>
-      ) : normalized && diff && raw ? (
-        <>
-          <div className="mb-1 flex items-center gap-3">
-            <h1 className="text-lg font-semibold">{normalized.name}</h1>
-            <StatusBadge status={diff.status} />
+      ) : normalized && diff ? (
+        <div className="flex flex-col gap-6">
+          <div>
+            <h1 className="mb-1 text-lg font-semibold">{normalized.name}</h1>
           </div>
 
-          {normalized.sku && (
-            <p className="mb-6 text-sm text-muted-foreground">
-              SKU: <span className="font-mono text-foreground">{normalized.sku}</span>
-            </p>
-          )}
+          <div className="w-full min-[1400px]:w-1/2">
+            <ProductCategorySelector
+              productId={id}
+              productName={normalized.name}
+              productModel={normalized.productType}
+            />
+          </div>
 
-          <Tabs defaultValue="shopify">
-            <TabsList className="mb-6">
-              <TabsTrigger value="product">Dane produktu</TabsTrigger>
-              <TabsTrigger value="shopify">Shopify</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="product">
-              <ProductInfoTab raw={raw} normalized={normalized} />
-            </TabsContent>
-
-            <TabsContent value="shopify">
-              <div className="mb-4 w-full min-[1400px]:w-1/2">
-                <ProductCategorySelector
-                  productId={id}
-                  productName={normalized.name}
-                  productModel={normalized.productType}
-                />
-              </div>
-              <FieldDiffDetail
-                productId={id}
-                normalized={normalized}
-                diff={diff}
-                fieldMap={FIELD_MAP}
-              />
-            </TabsContent>
-          </Tabs>
-        </>
+          <ProductComparisonView
+            productId={id}
+            pim={normalized}
+            shopify={shopifyNorm}
+            diff={diff}
+            initialSelections={fieldSelections}
+          />
+        </div>
       ) : null}
     </div>
   );

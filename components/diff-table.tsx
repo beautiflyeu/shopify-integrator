@@ -9,7 +9,7 @@ import {
   useReactTable,
   type SortingState,
 } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, Upload, RefreshCw, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { useSelectionStore } from "@/stores/selection";
 import { useCategoryStore } from "@/stores/category";
+import { useExportedProductsStore } from "@/stores/exported-products";
 import { suggestCategory } from "@/lib/suggest-category";
 import { CategoryRulesPanel } from "@/components/category-rules-panel";
 import type { ProductStatus } from "@/types/product";
@@ -45,11 +46,30 @@ const col = createColumnHelper<DiffTableRow>();
 function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
   const { isProductSelected, toggleProduct, selectProducts, deselectProducts, selectedProductIds, registerShopifyIds } = useSelectionStore();
   const setCategory = useCategoryStore((s) => s.setCategory);
+  const { exportedMap, load: loadExported } = useExportedProductsStore();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<ProductStatus | "all">("all");
   const [familyFilter, setFamilyFilter] = useState<string | "all">("all");
   const searchRef = useRef<HTMLInputElement>(null);
+  const [importing, setImporting] = useState(false);
+  const [importSummary, setImportSummary] = useState<string | null>(null);
+
+  async function handleImportStatus() {
+    setImporting(true);
+    setImportSummary(null);
+    try {
+      const res = await fetch("/api/shopify/import-status", { method: "POST" });
+      if (!res.ok) throw new Error(`Błąd serwera: ${res.status}`);
+      const data: { imported: number } = await res.json();
+      await loadExported();
+      setImportSummary(`Pobrano ${data.imported} produktów ze Shopify`);
+    } catch (err) {
+      setImportSummary(err instanceof Error ? err.message : "Błąd importu");
+    } finally {
+      setImporting(false);
+    }
+  }
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -67,6 +87,10 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
     for (const row of rows) map[row.id] = row.shopifyId ?? null;
     registerShopifyIds(map);
   }, [rows, registerShopifyIds]);
+
+  useEffect(() => {
+    loadExported();
+  }, [loadExported]);
 
   // auto-suggest disabled — categories must be set manually
   // useEffect(() => {
@@ -186,14 +210,47 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
       size: 120,
     }),
     col.accessor("shopifyId", {
-      header: "Shopify",
-      cell: (info) =>
-        info.getValue() ? (
-          <span className="text-xs font-medium text-green-600">✓</span>
-        ) : (
-          <span className="text-xs text-muted-foreground">—</span>
-        ),
-      size: 70,
+      header: "Export",
+      cell: (info) => {
+        const entry = exportedMap.get(info.row.original.id);
+        const shopifyId = info.getValue();
+        const wasExported = !!entry;
+        const inShopify = !!shopifyId;
+
+        if (!wasExported && !inShopify) {
+          return <span className="text-xs text-muted-foreground">—</span>;
+        }
+
+        const exportDate = entry?.exportedAt
+          ? new Date(entry.exportedAt).toLocaleString("pl-PL", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : null;
+
+        return (
+          <div className="flex flex-col items-center gap-1">
+            <div className="flex items-center gap-1">
+              {wasExported && (
+                <div title={`Eksportowano CSV${exportDate ? ` · ${exportDate}` : ""}`}>
+                  <Upload className="h-3.5 w-3.5 text-muted-foreground" />
+                </div>
+              )}
+              {inShopify && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src="/Shopify_icon.svg" alt="W Shopify" width={14} height={14} title="Potwierdzony w Shopify" />
+              )}
+            </div>
+            {exportDate && (
+              <span className="text-[10px] text-muted-foreground leading-none">{exportDate}</span>
+            )}
+          </div>
+        );
+      },
+      size: 80,
     }),
   ];
 
@@ -252,6 +309,23 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
               {f.label}
             </button>
           ))}
+        </div>
+        <div className="ml-auto flex items-center gap-2">
+          <button
+            onClick={handleImportStatus}
+            disabled={importing}
+            className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-1.5 text-xs font-medium transition-opacity disabled:opacity-40"
+          >
+            {importing ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <RefreshCw className="h-3.5 w-3.5" />
+            )}
+            {importing ? "Pobieranie…" : "Pobierz status Shopify"}
+          </button>
+          {importSummary && (
+            <span className="text-xs text-muted-foreground">{importSummary}</span>
+          )}
         </div>
       </div>
 
