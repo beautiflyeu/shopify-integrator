@@ -1,5 +1,3 @@
-import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 import { fetchProduct, ALL_INCLUDES } from "@/services/beautifly";
 import { fetchShopifyProduct } from "@/services/shopify";
 import { normalizeProduct } from "@/modules/pim/normalize";
@@ -9,8 +7,6 @@ import { readExportedProducts } from "@/lib/exported-products-db";
 import { getFieldSelections } from "@/lib/field-selections-db";
 import { ProductComparisonView } from "@/components/product-comparison-view";
 import { ProductCategorySelector } from "@/components/product-category-selector";
-import { ProductPageActions } from "@/components/product-page-actions";
-import { FIELD_MAP } from "@/config/field-map";
 
 export const dynamic = "force-dynamic";
 
@@ -45,36 +41,14 @@ export default async function ProductDetailPage({ params }: Props) {
     error = err instanceof Error ? err.message : "Błąd pobierania produktu";
   }
 
-  const allFieldKeys = FIELD_MAP.map((f) => String(f.pimKey));
-  const savedFieldKeys = Object.keys(fieldSelections).length > 0
-    ? allFieldKeys.filter((k) => fieldSelections[k] !== false)
-    : undefined;
-
   return (
     <div className="p-6">
-      <div className="mb-4 flex items-start justify-between gap-4">
-        <nav className="flex items-center gap-1 text-sm text-muted-foreground">
-          <Link href="/dashboard" className="hover:text-foreground">
-            Dashboard
-          </Link>
-          <ChevronRight className="h-4 w-4" />
-          <span className="text-foreground">{normalized?.name ?? `Produkt #${id}`}</span>
-        </nav>
-        {normalized && (
-          <ProductPageActions productId={id} fieldKeys={savedFieldKeys} />
-        )}
-      </div>
-
       {error ? (
         <div className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {error}
         </div>
       ) : normalized && diff ? (
         <div className="flex flex-col gap-6">
-          <div>
-            <h1 className="mb-1 text-lg font-semibold">{normalized.name}</h1>
-          </div>
-
           <div className="w-full min-[1400px]:w-1/2">
             <ProductCategorySelector
               productId={id}

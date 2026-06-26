@@ -25,6 +25,7 @@ import {
 import { useSelectionStore } from "@/stores/selection";
 import { useCategoryStore } from "@/stores/category";
 import { useExportedProductsStore } from "@/stores/exported-products";
+import { useExportQueueStore } from "@/stores/export-queue";
 import { suggestCategory } from "@/lib/suggest-category";
 import { CategoryRulesPanel } from "@/components/category-rules-panel";
 import type { ProductStatus } from "@/types/product";
@@ -44,9 +45,11 @@ export interface DiffTableRow {
 const col = createColumnHelper<DiffTableRow>();
 
 function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
-  const { isProductSelected, toggleProduct, selectProducts, deselectProducts, selectedProductIds, registerShopifyIds } = useSelectionStore();
+  const { registerShopifyIds } = useSelectionStore();
   const setCategory = useCategoryStore((s) => s.setCategory);
   const { exportedMap, load: loadExported } = useExportedProductsStore();
+  const { add, remove, isInQueue } = useExportQueueStore();
+  const [mounted, setMounted] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<ProductStatus | "all">("all");
@@ -70,6 +73,8 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
       setImporting(false);
     }
   }
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -133,25 +138,28 @@ function DiffTableInner({ rows }: { rows: DiffTableRow[] }) {
   }, [rows, query, statusFilter, familyFilter]);
 
   const filteredIds = filtered.map((r) => r.id);
-  const allFilteredSelected =
-    filteredIds.length > 0 && filteredIds.every((id) => selectedProductIds.has(id));
+  const allFilteredInQueue =
+    mounted && filteredIds.length > 0 && filteredIds.every((id) => isInQueue(id));
 
   const columns = [
     col.display({
       id: "select",
       header: () => (
         <Checkbox
-          checked={allFilteredSelected}
+          checked={allFilteredInQueue}
           onCheckedChange={(v) => {
-            if (v) selectProducts(filteredIds);
-            else deselectProducts(filteredIds);
+            if (v) filteredIds.forEach((id) => add(id));
+            else filteredIds.forEach((id) => remove(id));
           }}
         />
       ),
       cell: ({ row }) => (
         <Checkbox
-          checked={isProductSelected(row.original.id)}
-          onCheckedChange={() => toggleProduct(row.original.id)}
+          checked={mounted && isInQueue(row.original.id)}
+          onCheckedChange={() => {
+            const id = row.original.id;
+            isInQueue(id) ? remove(id) : add(id);
+          }}
         />
       ),
       size: 28,

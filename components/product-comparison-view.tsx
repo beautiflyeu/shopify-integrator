@@ -7,8 +7,10 @@ import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/status-badge";
+import { ExportCsvButton } from "@/components/export-csv-button";
 import { useExportQueueStore } from "@/stores/export-queue";
 import { useExportedProductsStore } from "@/stores/exported-products";
+import { usePageHeaderStore } from "@/stores/page-header";
 import { FIELD_MAP } from "@/config/field-map";
 import type { NormalizedProduct } from "@/types/product";
 import type { ProductDiff } from "@/modules/diff/diffProduct";
@@ -134,8 +136,15 @@ export function ProductComparisonView({ productId, pim, shopify, diff, initialSe
   const router = useRouter();
   const { add, remove, isInQueue } = useExportQueueStore();
   const loadExported = useExportedProductsStore((s) => s.load);
+  const setPageHeader = usePageHeaderStore((s) => s.set);
+  const resetPageHeader = usePageHeaderStore((s) => s.reset);
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setPageHeader({ productName: pim.name, productId });
+    return () => resetPageHeader();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pim.name, productId]);
   const inQueue = mounted && isInQueue(productId);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -199,6 +208,10 @@ export function ProductComparisonView({ productId, pim, shopify, diff, initialSe
     setSelections(next);
     saveSelections(next);
   }
+
+  const selectedFieldKeys = FIELD_MAP
+    .filter((f) => selections[String(f.pimKey)] !== false)
+    .map((f) => String(f.pimKey));
 
   const hasShopify = shopify !== null;
   const mainImage = pim.images[0];
@@ -285,6 +298,11 @@ export function ProductComparisonView({ productId, pim, shopify, diff, initialSe
             )}
           </div>
           <div className="flex items-center gap-2">
+            <ExportCsvButton
+              getProductIds={() => [productId]}
+              fieldKeys={selectedFieldKeys}
+              label="Eksportuj produkt do CSV"
+            />
             <button
               onClick={handleRefreshStatus}
               disabled={refreshing}
